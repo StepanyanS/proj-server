@@ -1,15 +1,12 @@
-import { Router } from 'express';
 import { UsersRouter } from './users-router';
-import { IRouting } from '../models/routing';
+import { Routing } from './routes';
 
 const usersrouter = new UsersRouter();
 
-export class Routes implements IRouting {
-  
-  router: Router;
+export class Routes extends Routing {
 
   constructor() {
-    this.router = Router();
+    super();
     this.route();
   }
 

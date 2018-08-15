@@ -1,9 +1,12 @@
-// import modules
-import { Router, Request, Response } from 'express';
-import { users } from '../users/index';
-
 // import models
 import { IUser } from '../models/user';
+
+// import modules
+import { Request, Response } from 'express';
+import { Routing } from './routes';
+
+// import constrollers
+import { users } from '../users/index';
 
 const usersArray: IUser[] = [
   {
@@ -14,12 +17,10 @@ const usersArray: IUser[] = [
   }
 ];
 
-export class UsersRouter {
-
-  router: Router;
+export class UsersRouter extends Routing {
 
   constructor () {
-    this.router = Router();
+    super();
     this.route();
   }
 
