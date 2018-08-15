@@ -3,6 +3,8 @@ import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import * as path from 'path';
 
+export class App {};
+
 import { copyProject } from "./utils/copy-project";
 
 import { makeZip } from './utils/make-zip';
