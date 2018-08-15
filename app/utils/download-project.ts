@@ -2,6 +2,12 @@ import { resolve } from "path";
 
 const downloadFolder = resolve(__dirname,  '../deliver/');
 
+/**
+ * @description Send project to client for download
+ * @export
+ * @param {*} req Request
+ * @param {*} res Response
+ */
 export function downloadProject(req, res): void {
   const file = `${downloadFolder}/${req.query.projectName}.zip`;
   res.download(file);

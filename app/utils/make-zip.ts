@@ -6,6 +6,13 @@ import { newProjectDir } from '../data/data';
 
 import { getNewProjectDir } from './utils';;
 
+
+/**
+ * @description makes project .zip
+ * @export
+ * @param {string} projectName project name
+ * @returns {Promise<boolean>}
+ */
 export function makeZip(projectName: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
     try {

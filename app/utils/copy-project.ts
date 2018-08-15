@@ -5,7 +5,7 @@ import { getNewProjectDir } from './utils';
 
 /**
  * @description Copies main project's files to deliver folder
- * @param {string} projectName
+ * @param {string} projectName project name
  * @returns {Promise<void>}
  */
 export async function copyProject (projectName: string): Promise<void> {
