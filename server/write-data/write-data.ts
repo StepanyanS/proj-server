@@ -6,12 +6,12 @@ export class WriteData implements IWriteData {
     let colorsSourcesData = '// Color themes\n';
 
     for(let [ key, value ] of Object.entries(colors)) {
-        colorsVariablesData += `$color-${key}: ${value} !default;\n`;
+      colorsVariablesData += `$color-${key}: ${value} !default;\n`;
     }
     colorsVariablesData += '\n';
     
     for(let [ key, value ] of Object.entries(colorsSources)) {
-        colorsSourcesData += `$color-${key}: $color-${value} !default;\n`;
+      colorsSourcesData += `$color-${key}: $color-${value} !default;\n`;
     }
     colorsSourcesData += '\n';
     

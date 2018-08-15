@@ -84,9 +84,9 @@ const writeData = new WriteData();
 
 async function createProject(project: IProject): Promise<boolean> {
   try {
-      await copyProject(project.name);
-      await writeStyles(getVariablesFilePath(project.name), writeData.getWriteData(project.colors, colorsSources));
-      return makeZip(project.name).then(res => res);
+    await copyProject(project.name);
+    await writeStyles(getVariablesFilePath(project.name), writeData.getWriteData(project.colors, colorsSources));
+    return makeZip(project.name).then(res => res);
   } catch(error) {
     console.log(error);
   }

@@ -1,5 +1,5 @@
 export interface IProject {
-    name: string,
-    colors: Object
-  }
+  name: string,
+  colors: Object
+}
   
