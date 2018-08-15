@@ -1,4 +1,4 @@
 // import Users
-import { Users } from './users';
+import { UsersController } from './users.controller';
 
-export const users = new Users;
+export const usersController = new UsersController();
