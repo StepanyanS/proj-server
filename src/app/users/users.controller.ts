@@ -24,15 +24,15 @@ export class UsersController implements IRest {
    * @returns {IUser}
    * @memberof Users
    */
-  getUserByEmail(email: string, users: IUser[]): IUser {
-    return users.find(user => user.email === email);
+  getUserByEmail(email: string): IUser {
+    return usersArray.find(user => user.email === email);
   }
 
   getUser(req: Request, res: Response): void {
     res.send(
-      this.getUserByEmail(req.query['email'], usersArray)
+      this.getUserByEmail(req.query['email'])
     );
-    console.log(this.getUserByEmail(req.query['email'], usersArray));
+    console.log(this.getUserByEmail(req.query['email']));
   }
 
 
@@ -58,9 +58,10 @@ export class UsersController implements IRest {
   }
 
   addUser(req: Request, res: Response): void {
+    console.log(req.body);
     this.addUserByEmail(req.body);
     console.log(this.getUsers());
-    res.status(201).send(req.body);
+    res.status(201).send(this.getUserByEmail(req.body.email));
   }
 
   
@@ -71,8 +72,8 @@ export class UsersController implements IRest {
    * @memberof Users
    */
   editUserByEmail(user: IUser): void {
-    Object.assign(this.getUserByEmail(user.email, usersArray), user);
-    console.log(this.getUserByEmail(user.email, usersArray));
+    Object.assign(this.getUserByEmail(user.email), user);
+    console.log(this.getUserByEmail(user.email));
   }
 
   editUser(req: Request, res: Response): void {
