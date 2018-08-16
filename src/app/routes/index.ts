@@ -1,4 +1,4 @@
-import { Routing } from './routes';
+import { Routing } from './routing';
 
 import { UsersRouter } from './users-router';
 import { ProjectsRouter } from './projects-router';

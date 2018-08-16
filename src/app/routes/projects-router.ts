@@ -1,4 +1,4 @@
-import { Routing } from "./routes";
+import { Routing } from './routing';
 import { projectsController } from './../projects/index';
 
 export class ProjectsRouter extends Routing {

@@ -1,4 +1,4 @@
-import { Routing } from './routes';
+import { Routing } from './routing';
 
 // import constrollers
 import { usersController } from './../users/index';
