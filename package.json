@@ -5,11 +5,11 @@
   "main": "./server/index.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npm run build:live",
+    "start": "npm run build",
     "build": "ts-node ./src/main.ts",
     "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/main.ts"
   },
-  "author": "ss",
+  "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/archiver": "^2.1.2",

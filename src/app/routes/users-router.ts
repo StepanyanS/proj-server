@@ -1,6 +1,3 @@
-// import modules
-import { Request, Response } from 'express';
-
 import { Routing } from './routes';
 
 // import constrollers
@@ -14,10 +11,6 @@ export class UsersRouter extends Routing {
   }
 
   route(): void {
-    // this.router.get('/', (req: Request, res: Response) => {
-    //   usersController.getUser(req, res);
-    // });
-
     this.router.get('/', usersController.getUser.bind(usersController));
 
     this.router.put('/', usersController.editUser.bind(usersController));
