@@ -9,7 +9,7 @@
     "build": "ts-node ./src/main.ts",
     "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./src/main.ts"
   },
-  "author": "",
+  "author": "ss",
   "license": "ISC",
   "devDependencies": {
     "@types/archiver": "^2.1.2",
