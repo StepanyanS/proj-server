@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
+import { createConnection } from "typeorm";
 
 import { Routes } from './routes/index';
 
@@ -12,21 +13,24 @@ export class App {
   }
 
   bootstrap() {
-    const app = express();
-    
-    const corsOptions = {
-      origin: 'http://localhost:4200',
-      optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-    };
 
-    app.use(cors(corsOptions));
-    app.use(bodyParser.json());
+    createConnection().then(async connection => {
 
-    app.use('/api', this.routes.router);
+      const app = express();
+      
+      const corsOptions = {
+        origin: 'http://localhost:4200',
+        optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+      };
 
-    app.listen(3000, () => {
-      console.log('Server started!');
-    });
+      app.use(cors(corsOptions));
+      app.use(bodyParser.json());
+      app.use('/api', this.routes.router);
+
+      app.listen(3000, () => {
+        console.log('Server started!');
+      });
+    }).catch(error => console.log("TypeORM connection error: ", error));
   }
 };
 
