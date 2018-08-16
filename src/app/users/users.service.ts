@@ -1,5 +1,11 @@
+import {getManager} from "typeorm";
+
+// import models
 import { IUser } from "../models/user";
 import { IRest } from "../models/rest";
+
+// import entitie
+import { UserEntity } from "../entities/user.entity";
 
 export class UsersService implements IRest {
 
@@ -16,21 +22,24 @@ export class UsersService implements IRest {
     ];
   }
 
-  getUserByEmail(email: string): IUser {
-    return this.usersArray.find(user => user.email === email);
+  async getUserByEmail(email: string): Promise<UserEntity> {
+    // return this.usersArray.find(user => user.email === email);
+    return getManager().getRepository(UserEntity).findOne({email: email});
   }
 
-  getUsers(): IUser[] {
-    return this.usersArray;
+  getUsers(): Promise<UserEntity[]> {
+    return getManager().getRepository(UserEntity).find();
   }
 
-  addUser(user: IUser): void {
-    user.id = this.usersArray[this.usersArray.length - 1].id + 1;
-    this.usersArray.push(user);
+  async addUser(user: UserEntity): Promise<UserEntity> {
+    return getManager().getRepository(UserEntity).save(user);
   }
 
-  editUser(user: IUser): void {
-    Object.assign(this.getUserByEmail(user.email), user);
-    console.log(this.getUserByEmail(user.email));
+  async editUser(user: IUser): Promise<UserEntity> {
+    // const oldUser = {};
+    // this.getUserByEmail(user.email)
+    // .then((oldUser: IUser) => {
+    //   Object.assign(oldUser, user);
+    // }).catch(error => console.log(error));
   }
 }

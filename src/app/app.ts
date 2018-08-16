@@ -14,22 +14,23 @@ export class App {
 
   bootstrap() {
 
+    const app = express();
+
+    const corsOptions = {
+      origin: 'http://localhost:4200',
+      optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+    };
+
+    app.use(cors(corsOptions));
+    app.use(bodyParser.json());
+    app.use('/api', this.routes.router);
+
+    app.listen(3000, () => {
+      console.log('Server started!');
+    });
+    
     createConnection().then(async connection => {
-
-      const app = express();
-
-      const corsOptions = {
-        origin: 'http://localhost:4200',
-        optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
-      };
-
-      app.use(cors(corsOptions));
-      app.use(bodyParser.json());
-      app.use('/api', this.routes.router);
-
-      app.listen(3000, () => {
-        console.log('Server started!');
-      });
+      console.log('Connected to DB');
     }).catch(error => console.log("TypeORM connection error: ", error));
   }
 };

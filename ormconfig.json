@@ -7,7 +7,7 @@
   "database": "front-base",
   "synchronize": true,
   "entities": [
-    "src/entity/*.ts"
+    "src/app/entities/*.entity.ts"
   ],
   "subscribers": [
     "src/subscriber/*.ts"
@@ -16,7 +16,7 @@
     "src/migration/*.ts"
   ],
   "cli": {
-    "entitiesDir": "src/entity",
+    "entitiesDir": "src/app/entities",
     "migrationsDir": "src/migration",
     "subscribersDir": "src/subscriber"
   }
