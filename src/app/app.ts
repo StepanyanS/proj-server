@@ -17,7 +17,7 @@ export class App {
     createConnection().then(async connection => {
 
       const app = express();
-      
+
       const corsOptions = {
         origin: 'http://localhost:4200',
         optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
