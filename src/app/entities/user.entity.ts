@@ -3,15 +3,26 @@ import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
 export class UserEntity {
 
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({
+    type: 'int'
+  })
   id: number;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+    length: 255
+  })
   email: string;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+    length: 255
+  })
   password: string;
 
-  @Column()
+  @Column({
+    type: 'varchar',
+    length: 255
+  })
   name: string;
 }

@@ -27,8 +27,8 @@ export class UsersController {
   }
 
   editUser(req: Request, res: Response): void {
-    this.usersService.editUser(req.body);
-    console.log(this.usersService.getUsers());
-    res.status(201).send(req.body);
+    this.usersService.editUser(req.body)
+    .then((user: IUser) => res.status(201).send(user))
+    .catch(error => console.log(error));
   }
 }

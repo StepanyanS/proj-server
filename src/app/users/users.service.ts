@@ -1,45 +1,66 @@
+// import typeorm modules
 import {getManager} from "typeorm";
 
 // import models
 import { IUser } from "../models/user";
 import { IRest } from "../models/rest";
 
+// import db
+import { Datebase } from "../db/db";
+
 // import entitie
 import { UserEntity } from "../entities/user.entity";
 
 export class UsersService implements IRest {
 
-  usersArray: IUser[];
+  constructor(
+    private db: Datebase
+  ) {}
 
-  constructor() {
-    this.usersArray = [
-      {
-        email: 'sasun-07@mail.ru',
-        password: '123456',
-        name: 'Sasun',
-        id: 1
-      }
-    ];
-  }
 
+  /**
+   * @description gets user from db
+   * @param {string} email
+   * @returns {Promise<UserEntity>}
+   * @memberof UsersService
+   */
   async getUserByEmail(email: string): Promise<UserEntity> {
-    // return this.usersArray.find(user => user.email === email);
-    return getManager().getRepository(UserEntity).findOne({email: email});
+    return this.db.connect().then(async (connection) => {
+      const user: UserEntity = await connection.getRepository(UserEntity).findOne({email: email});
+      await connection.close();
+      return user;
+    }).catch(error => error);
   }
 
-  getUsers(): Promise<UserEntity[]> {
-    return getManager().getRepository(UserEntity).find();
-  }
 
+  /**
+   * @description adds user to db
+   * @param {UserEntity} user
+   * @returns {Promise<UserEntity>}
+   * @memberof UsersService
+   */
   async addUser(user: UserEntity): Promise<UserEntity> {
-    return getManager().getRepository(UserEntity).save(user);
+    return this.db.connect().then(async (connection) => {
+      await connection.getRepository(UserEntity).save(user);
+      await connection.close();
+      return user;
+    }).catch(error => error);
   }
 
+
+  /**
+   * @description edits user in db
+   * @param {IUser} user
+   * @returns {Promise<UserEntity>}
+   * @memberof UsersService
+   */
   async editUser(user: IUser): Promise<UserEntity> {
-    // const oldUser = {};
-    // this.getUserByEmail(user.email)
-    // .then((oldUser: IUser) => {
-    //   Object.assign(oldUser, user);
-    // }).catch(error => console.log(error));
+    return this.db.connect().then(async (connection) => {
+      const oldUser = await connection.getRepository(UserEntity).findOne({email: user.email});
+      Object.assign(oldUser, user);
+      await connection.getRepository(UserEntity).save(oldUser);
+      await connection.close();
+      return user;
+    }).catch(error => error);
   }
 }

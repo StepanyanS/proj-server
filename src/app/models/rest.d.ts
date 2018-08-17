@@ -3,7 +3,6 @@ import { UserEntity } from '../entities/user.entity';
 
 export interface IRest {
   getUserByEmail(email: string, users: IUser[]): Promise<IUser>;
-  getUsers(): Promise<IUser[]>;
-  addUser(user: IUser): void;
+  addUser(user: IUser): Promise<UserEntity>;
   editUser(user: IUser, users: IUser[]): Promise<UserEntity>;
 }

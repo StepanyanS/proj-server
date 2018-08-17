@@ -1,7 +1,6 @@
 import * as express from 'express';
 import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
-import { createConnection } from "typeorm";
 
 import { Routes } from './routes/index';
 
@@ -28,10 +27,6 @@ export class App {
     app.listen(3000, () => {
       console.log('Server started!');
     });
-    
-    createConnection().then(async connection => {
-      console.log('Connected to DB');
-    }).catch(error => console.log("TypeORM connection error: ", error));
   }
 };
 
