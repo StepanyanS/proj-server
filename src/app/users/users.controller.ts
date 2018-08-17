@@ -8,7 +8,7 @@ import { UsersService } from "./users.service";
 import { IUser } from './../models/user.d';
 
 /**
- * @description User Controller Instance
+ * @description User Controller instance
  * @export
  * @class UsersController
  */

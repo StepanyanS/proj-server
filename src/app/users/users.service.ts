@@ -8,8 +8,9 @@ import { Datebase } from "../db/db";
 // import entitie
 import { UserEntity } from "../entities/user.entity";
 
+
 /**
- * @description Users Controller Provider Instance
+ * @description Users Controller Provider instance
  * @export
  * @class UsersService
  * @implements {IRest}
@@ -65,7 +66,7 @@ export class UsersService implements IRest {
    * @returns {Promise<UserEntity>}
    * @memberof UsersService
    */
-  async editUser(user: UserEntity): Promise<UserEntity> {
+  async editUser(user: IUser): Promise<UserEntity> {
     try {
       const oldUser: UserEntity = await this.getUserByEmail(user.email, true);
       Object.assign(oldUser, user);

@@ -12,20 +12,55 @@ import { IProject } from '../models/project';
 // import configs
 import { mainProjectDir, newProjectDir } from './projects.config';
 
+/**
+ * @description Projects Controller Provider instance
+ * @export
+ * @class ProjectsService
+ */
 export class ProjectsService {
   
+  /**
+   * @description Creates an instance of ProjectsService
+   * @param {GenerateVariables} generateVariables
+   * @memberof ProjectsService
+   */
   constructor(
     private generateVariables: GenerateVariables
   ) {}
   
+  
+  /**
+   * @description Gets new project direction
+   * @private
+   * @param {string} name
+   * @returns {string}
+   * @memberof ProjectsService
+   */
   private getNewProjectDir(name: string): string {
     return resolve(__dirname, newProjectDir, name);
   }
 
+
+  /**
+   * @description Gets variables file path by schematic
+   * @private
+   * @param {string} projectName
+   * @param {*} SassFile
+   * @returns {string}
+   * @memberof ProjectsService
+   */
   private getVariablesFilePath(projectName: string, SassFile): string {
     return resolve(__dirname, `../../assets/deliver/${projectName}/src/assets/scss/utilities/_${SassFile}.scss`);
   }
 
+  
+  /**
+   * @description Copies main project for delivery
+   * @private
+   * @param {string} projectName
+   * @returns {Promise<void>}
+   * @memberof ProjectsService
+   */
   private async copyProject(projectName: string): Promise<void> {
     try {
       await fse.copy(mainProjectDir, this.getNewProjectDir(projectName));
@@ -35,6 +70,14 @@ export class ProjectsService {
     }
   }
 
+
+  /**
+   * @description Makes project .zip
+   * @private
+   * @param {string} projectName
+   * @returns {Promise<boolean>}
+   * @memberof ProjectsService
+   */
   private makeZip(projectName: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const archiverOptions = {
@@ -66,7 +109,16 @@ export class ProjectsService {
     })
   }
 
-  private async writeStyles(variablesFile: string, data: string): Promise<void> {
+  
+  /**
+   * @description Writes variables data in specified file
+   * @private
+   * @param {string} variablesFile
+   * @param {string} data
+   * @returns {Promise<void>}
+   * @memberof ProjectsService
+   */
+  private async writeVariablesData(variablesFile: string, data: string): Promise<void> {
     try {
       const wrStream: WriteStream = createWriteStream(variablesFile);
       await wrStream.write(data);
@@ -76,6 +128,13 @@ export class ProjectsService {
     }
   }
 
+  
+  /**
+   * @description Creates project for download
+   * @param {IProject} project
+   * @returns {Promise<boolean>}
+   * @memberof ProjectsService
+   */
   async createProject(project: IProject): Promise<boolean> {
 
     const colorsSources = {
@@ -85,7 +144,7 @@ export class ProjectsService {
 
     try {
       await this.copyProject(project.name);
-      await this.writeStyles(this.getVariablesFilePath(project.name, 'variables'), this.generateVariables.getColorsData(project.colors, colorsSources));
+      await this.writeVariablesData(this.getVariablesFilePath(project.name, 'variables'), this.generateVariables.getColorsData(project.colors, colorsSources));
       return this.makeZip(project.name).then(res => res)
       .then(res => res)
       .catch(error => error);
