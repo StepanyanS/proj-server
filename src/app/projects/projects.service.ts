@@ -70,6 +70,24 @@ export class ProjectsService {
     }
   }
 
+  /**
+   * @description Writes variables data in specified file
+   * @private
+   * @param {string} variablesFile
+   * @param {string} data
+   * @returns {Promise<void>}
+   * @memberof ProjectsService
+   */
+  private async writeVariablesData(variablesFile: string, data: string): Promise<void> {
+    try {
+      const wrStream: WriteStream = createWriteStream(variablesFile);
+      await wrStream.write(data);
+      console.log('Variables written!');
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
 
   /**
    * @description Makes project .zip
@@ -111,25 +129,6 @@ export class ProjectsService {
 
   
   /**
-   * @description Writes variables data in specified file
-   * @private
-   * @param {string} variablesFile
-   * @param {string} data
-   * @returns {Promise<void>}
-   * @memberof ProjectsService
-   */
-  private async writeVariablesData(variablesFile: string, data: string): Promise<void> {
-    try {
-      const wrStream: WriteStream = createWriteStream(variablesFile);
-      await wrStream.write(data);
-      console.log('Variables written!');
-    } catch (err) {
-      console.error(err);
-    }
-  }
-
-  
-  /**
    * @description Creates project for download
    * @param {IProject} project
    * @returns {Promise<boolean>}
@@ -145,7 +144,7 @@ export class ProjectsService {
     try {
       await this.copyProject(project.name);
       await this.writeVariablesData(this.getVariablesFilePath(project.name, 'variables'), this.generateVariables.getColorsData(project.colors, colorsSources));
-      return this.makeZip(project.name).then(res => res)
+      return this.makeZip(project.name)
       .then(res => res)
       .catch(error => error);
     } catch(error) {

@@ -1,12 +1,15 @@
+// import modules
+import { Connection } from 'typeorm';
+
 // import models
-import { IUser } from "../models/user";
-import { IRest } from "../models/rest";
+import { IUser } from '../models/user';
+import { IRest } from '../models/rest';
 
 // import db
-import { Datebase } from "../db/db";
+import { Datebase } from '../db/db';
 
 // import entitie
-import { UserEntity } from "../entities/user.entity";
+import { UserEntity } from '../entities/user.entity';
 
 
 /**
@@ -36,7 +39,7 @@ export class UsersService implements IRest {
    * @memberof UsersService
    */
   async getUserByEmail(email: string, dbConnect: boolean = false): Promise<UserEntity> {
-    return this.db.connect().then(async (connection) => {
+    return this.db.connect().then(async (connection: Connection) => {
       const user: UserEntity = await connection.getRepository(UserEntity).findOne({email: email});
       if(!dbConnect) await connection.close();
       return user;
