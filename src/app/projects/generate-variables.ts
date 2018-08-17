@@ -1,6 +1,6 @@
-export class GenerateStyles {
+export class GenerateVariables {
 
-  private getColorsData(colors: Object, colorsSources: Object): string {
+  public getColorsData(colors: Object, colorsSources: Object): string {
     let colorsVariablesData = '// colors\n';
     let colorsSourcesData = '// Color themes\n';
 
@@ -17,7 +17,7 @@ export class GenerateStyles {
     return colorsVariablesData + colorsSourcesData;
   }
 
-  public getWriteData(colors: Object, colorsSources: Object): string {
+  public getGeneratedData(colors: Object, colorsSources: Object): string {
     return this.getColorsData(colors, colorsSources);
   } 
 }

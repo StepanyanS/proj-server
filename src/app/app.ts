@@ -29,18 +29,3 @@ export class App {
     });
   }
 };
-
-import { writeStyles } from './write-styles';
-
-import { WriteData } from './write-data/write-data';
-
-// function getVariablesFilePath(projectName: string): string {
-//   return path.resolve(__dirname, `./deliver/${projectName}/src/assets/scss/utilities/_variables.scss`);
-// }
-
-// const colorsSources = {
-//   primary: 'red',
-//   secondary: 'black'
-// };
-
-// const writeData = new WriteData();
