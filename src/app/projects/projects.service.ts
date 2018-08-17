@@ -16,7 +16,7 @@ export class ProjectsService {
     return resolve(__dirname, newProjectDir, name);
   }
 
-  async copyProject(projectName: string): Promise<void> {
+  private async copyProject(projectName: string): Promise<void> {
     try {
       await fse.copy(mainProjectDir, this.getNewProjectDir(projectName));
       console.log('Copied!');
@@ -78,6 +78,10 @@ export class ProjectsService {
       console.log(error);
       return false
     }
+  }
+
+  private async writeStyles() {
+    
   }
 
   async createProject(project: IProject): Promise<boolean> {

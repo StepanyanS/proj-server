@@ -34,10 +34,10 @@ export class UsersService implements IRest {
    * @returns {Promise<UserEntity>}
    * @memberof UsersService
    */
-  async getUserByEmail(email: string): Promise<UserEntity> {
+  async getUserByEmail(email: string, dbConnect: boolean = false): Promise<UserEntity> {
     return this.db.connect().then(async (connection) => {
       const user: UserEntity = await connection.getRepository(UserEntity).findOne({email: email});
-      await connection.close();
+      if(!dbConnect) await connection.close();
       return user;
     }).catch(error => error);
   }
@@ -65,13 +65,16 @@ export class UsersService implements IRest {
    * @returns {Promise<UserEntity>}
    * @memberof UsersService
    */
-  async editUser(user: IUser): Promise<UserEntity> {
-    return this.db.connect().then(async (connection) => {
-      const oldUser = await connection.getRepository(UserEntity).findOne({email: user.email});
+  async editUser(user: UserEntity): Promise<UserEntity> {
+    try {
+      const oldUser: UserEntity = await this.getUserByEmail(user.email, true);
       Object.assign(oldUser, user);
-      await connection.getRepository(UserEntity).save(oldUser);
-      await connection.close();
-      return user;
-    }).catch(error => error);
+      await this.db.connection.getRepository(UserEntity).save(oldUser);
+      await this.db.connection.close();
+      return oldUser;
+    }
+    catch(error) {
+      console.log(error);
+    }
   }
 }
