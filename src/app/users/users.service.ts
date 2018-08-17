@@ -9,7 +9,7 @@ import { Datebase } from "../db/db";
 import { UserEntity } from "../entities/user.entity";
 
 /**
- * @description Provider for Users Controller
+ * @description Users Controller Provider Instance
  * @export
  * @class UsersService
  * @implements {IRest}
