@@ -1,6 +1,5 @@
 // import providers
 import { UsersService } from "./users.service";
-import { UserEntity } from "../entities/user.entity";
 
 // import modules
 import { Request, Response } from 'express';
@@ -9,8 +8,7 @@ import { IUser } from './../models/user.d';
 export class UsersController {
 
   constructor(
-    private usersService: UsersService,
-    private userEntity: UserEntity
+    private usersService: UsersService
   ) {}
 
   getUser(req: Request, res: Response): void {
@@ -20,8 +18,9 @@ export class UsersController {
   }
 
   addUser(req: Request, res: Response): void {
-    Object.assign(this.userEntity, req.body);
-    this.usersService.addUser(this.userEntity)
+    // Object.assign(this.userEntity, req.body);
+    // this.usersService.addUser(this.userEntity)
+    this.usersService.addUser(req.body)
     .then((user: IUser) => res.status(201).send(user))
     .catch(error => console.log(error));
   }

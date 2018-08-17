@@ -1,6 +1,3 @@
-// import typeorm modules
-import {getManager} from "typeorm";
-
 // import models
 import { IUser } from "../models/user";
 import { IRest } from "../models/rest";
@@ -11,10 +8,23 @@ import { Datebase } from "../db/db";
 // import entitie
 import { UserEntity } from "../entities/user.entity";
 
+/**
+ * @description Provider for Users Controller
+ * @export
+ * @class UsersService
+ * @implements {IRest}
+ */
 export class UsersService implements IRest {
 
+  /**
+   * @description Creates an instance of UsersService.
+   * @param {Datebase} db
+   * @param {UserEntity} userEntity
+   * @memberof UsersService
+   */
   constructor(
-    private db: Datebase
+    private db: Datebase,
+    private userEntity: UserEntity
   ) {}
 
 
@@ -39,9 +49,10 @@ export class UsersService implements IRest {
    * @returns {Promise<UserEntity>}
    * @memberof UsersService
    */
-  async addUser(user: UserEntity): Promise<UserEntity> {
+  async addUser(user: IUser): Promise<UserEntity> {
     return this.db.connect().then(async (connection) => {
-      await connection.getRepository(UserEntity).save(user);
+      Object.assign(this.userEntity, user);
+      await connection.getRepository(UserEntity).save(this.userEntity);
       await connection.close();
       return user;
     }).catch(error => error);

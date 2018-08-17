@@ -9,7 +9,7 @@ import { UsersService } from './users.service';
 import { UserEntity } from '../entities/user.entity';
 
 const db = new Datebase();
-const usersService = new UsersService(db);
 const userEntity = new UserEntity();
+const usersService = new UsersService(db, userEntity);
 
-export const usersController = new UsersController(usersService, userEntity);
+export const usersController = new UsersController(usersService);
