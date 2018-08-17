@@ -5,5 +5,8 @@ export abstract class Routing {
 
   constructor() {
     this.router = Router();
+    this.route();
   }
+
+  abstract route(): void;
 }

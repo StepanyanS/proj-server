@@ -4,7 +4,6 @@ import { projectsController } from './../projects/index';
 export class ProjectsRouter extends Routing {
   constructor() {
     super();
-    this.route();
   }
 
   route(): void {

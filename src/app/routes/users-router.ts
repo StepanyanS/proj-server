@@ -7,7 +7,6 @@ export class UsersRouter extends Routing {
 
   constructor () {
     super();
-    this.route();
   }
 
   route(): void {

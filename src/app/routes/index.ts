@@ -10,7 +10,6 @@ export class Routes extends Routing {
 
   constructor() {
     super();
-    this.route();
   }
 
   route(): void {
