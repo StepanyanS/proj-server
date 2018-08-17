@@ -3,6 +3,7 @@ import { ProjectsService } from './projects.service';
 
 import { newProjectDir } from './projects.config';
 
+
 /**
  * @description ProjectsController instance
  * @export
@@ -10,12 +11,15 @@ import { newProjectDir } from './projects.config';
  */
 export class ProjectsController {
 
+
   /**
    * @description Creates an instance of ProjectsController.
    * @param {ProjectsService} projectsService
    * @memberof ProjectsController
    */
-  constructor (private projectsService: ProjectsService) {}
+  constructor (
+    private projectsService: ProjectsService
+  ) {}
 
 
   /**
