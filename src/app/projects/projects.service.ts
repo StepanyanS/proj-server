@@ -70,6 +70,7 @@ export class ProjectsService {
     }
   }
 
+  
   /**
    * @description Writes variables data in specified file
    * @private

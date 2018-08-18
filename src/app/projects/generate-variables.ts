@@ -1,3 +1,6 @@
+// import models
+import { Color } from "../models/color";
+
 /**
  * @description GenerateVariables instance
  * @export
@@ -12,12 +15,12 @@ export class GenerateVariables {
    * @returns {string}
    * @memberof GenerateVariables
    */
-  public getColorsData(colors: Object, colorsSources: Object): string {
+  public getColorsData(colors: Color[], colorsSources: Object): string {
     let colorsVariablesData = '// colors\n';
     let colorsSourcesData = '// Color themes\n';
 
-    for(let [ key, value ] of Object.entries(colors)) {
-      colorsVariablesData += `$color-${key}: ${value} !default;\n`;
+    for(let color of colors) {
+      colorsVariablesData += `$color-${color.name}: ${color.value} !default;\n`;
     }
     colorsVariablesData += '\n';
     
@@ -37,7 +40,7 @@ export class GenerateVariables {
    * @returns {string}
    * @memberof GenerateVariables
    */
-  public getGeneratedData(colors: Object, colorsSources: Object): string {
+  public getGeneratedData(colors: Color[], colorsSources: Object): string {
     return this.getColorsData(colors, colorsSources);
   } 
 }
