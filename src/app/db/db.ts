@@ -29,10 +29,12 @@ export class Datebase {
   
   /**
    * @description Closes connection to database
+   * @returns {Promise<Connection>}
    * @memberof Datebase
    */
-  async close() {
+  async close(): Promise<Connection> {
     await this.connection.close();
     console.log('DB connection is closed');
+    return this.connection;
   }
 }
