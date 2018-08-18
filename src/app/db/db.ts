@@ -1,11 +1,15 @@
-import { Connection, createConnection } from "typeorm";
+// import modules
+import { Connection, createConnection } from 'typeorm';
+
+// import models
+import { IDB } from '../models/db';
 
 /**
  * @description Database instance
  * @export
  * @class Datebase
  */
-export class Datebase {
+export class Datebase implements IDB {
 
   connection: Connection;
 
