@@ -3,7 +3,7 @@ import { Router } from 'express';
 export abstract class Routing {
   router: Router;
 
-  constructor() {
+  protected constructor() {
     this.router = Router();
     this.route();
   }
