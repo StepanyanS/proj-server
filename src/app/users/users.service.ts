@@ -43,7 +43,7 @@ export class UsersService implements IRest {
       const user: UserEntity = await connection.getRepository(UserEntity).findOne({email: email});
       if(!dbConnect) await connection.close();
       return user;
-    }).catch(error => error);
+    });
   }
 
 

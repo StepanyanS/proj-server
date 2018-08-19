@@ -33,7 +33,7 @@ export class UsersController {
   getUser(req: Request, res: Response): void {
     this.usersService.getUserByEmail(req.query['email'])
     .then((user: IUser) => res.send(user))
-    .catch(error => console.log(error));
+    .catch(error => res.send(false));
   }
 
   
