@@ -9,7 +9,7 @@ import { IDB } from '../models/db';
  * @export
  * @class Datebase
  */
-export class Datebase implements IDB {
+export class Datebase {
 
   connection: Connection;
 
@@ -24,10 +24,15 @@ export class Datebase implements IDB {
    * @returns {Promise<Connection>}
    * @memberof Datebase
    */
-  async connect(): Promise<Connection> {
-    this.connection = await createConnection();
-    console.log('Connected to DB');
-    return this.connection;
+  async connect(): Promise<any> {
+    try {
+      this.connection = await createConnection();
+      console.log('Connected to DB');
+      return this.connection;
+    }
+    catch(error) {
+      return false;
+    }
   }
 
   

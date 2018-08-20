@@ -18,7 +18,7 @@ import { UserEntity } from '../entities/user.entity';
  * @class UsersService
  * @implements {IRest}
  */
-export class UsersService implements IRest {
+export class UsersService {
 
   /**
    * @description Creates an instance of UsersService.
@@ -38,11 +38,14 @@ export class UsersService implements IRest {
    * @returns {Promise<UserEntity>}
    * @memberof UsersService
    */
-  async getUserByEmail(email: string, dbConnect: boolean = false): Promise<UserEntity> {
+  async getUserByEmail(email: string, dbConnect: boolean = false): Promise<false | UserEntity> {
     return this.db.connect().then(async (connection: Connection) => {
-      const user: UserEntity = await connection.getRepository(UserEntity).findOne({email: email});
-      if(!dbConnect) await connection.close();
-      return user;
+      if(connection) {
+        const user: UserEntity = await connection.getRepository(UserEntity).findOne({email: email});
+        if(!dbConnect) await connection.close();
+        return user;
+      }
+      return false;
     });
   }
 
@@ -69,16 +72,16 @@ export class UsersService implements IRest {
    * @returns {Promise<UserEntity>}
    * @memberof UsersService
    */
-  async editUser(user: IUser): Promise<UserEntity> {
-    try {
-      const oldUser: UserEntity = await this.getUserByEmail(user.email, true);
-      Object.assign(oldUser, user);
-      await this.db.connection.getRepository(UserEntity).save(oldUser);
-      await this.db.connection.close();
-      return oldUser;
-    }
-    catch(error) {
-      console.log(error);
-    }
-  }
+  // async editUser(user: IUser): Promise<UserEntity> {
+  //   try {
+  //     const oldUser: UserEntity = await this.getUserByEmail(user.email, true);
+  //     Object.assign(oldUser, user);
+  //     await this.db.connection.getRepository(UserEntity).save(oldUser);
+  //     await this.db.connection.close();
+  //     return oldUser;
+  //   }
+  //   catch(error) {
+  //     console.log(error);
+  //   }
+  // }
 }
