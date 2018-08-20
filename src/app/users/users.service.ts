@@ -42,11 +42,14 @@ export class UsersService {
     return this.db.connect().then(async (connection: Connection) => {
       if(connection) {
         const user: UserEntity = await connection.getRepository(UserEntity).findOne({email: email});
-        if(!dbConnect) await connection.close();
-        return user;
+        if(!dbConnect) {
+          await connection.close();
+          console.log('DB connection is closed');
+        }
+        return typeof user !== 'undefined' && user !== null ? user : false;
       }
       return false;
-    });
+    }).catch(error => error);
   }
 
 
@@ -56,12 +59,18 @@ export class UsersService {
    * @returns {Promise<UserEntity>}
    * @memberof UsersService
    */
-  async addUser(user: IUser): Promise<UserEntity> {
+  async addUser(user: IUser): Promise<UserEntity | false> {
     return this.db.connect().then(async (connection) => {
-      Object.assign(this.userEntity, user);
-      await connection.getRepository(UserEntity).save(this.userEntity);
-      await connection.close();
-      return user;
+      if(connection) {
+        Object.assign(this.userEntity, user);
+        await connection.getRepository(UserEntity).save(this.userEntity);
+        await connection.close();
+        console.log('DB connection is closed');
+        return user;
+      }
+      else {
+        return false;
+      }
     }).catch(error => error);
   }
 
@@ -72,16 +81,19 @@ export class UsersService {
    * @returns {Promise<UserEntity>}
    * @memberof UsersService
    */
-  // async editUser(user: IUser): Promise<UserEntity> {
-  //   try {
-  //     const oldUser: UserEntity = await this.getUserByEmail(user.email, true);
-  //     Object.assign(oldUser, user);
-  //     await this.db.connection.getRepository(UserEntity).save(oldUser);
-  //     await this.db.connection.close();
-  //     return oldUser;
-  //   }
-  //   catch(error) {
-  //     console.log(error);
-  //   }
-  // }
+  async editUser(user: IUser): Promise<UserEntity | false> {
+    try {
+      const oldUser: UserEntity | false = await this.getUserByEmail(user.email, true);
+      if(oldUser) {
+        Object.assign(oldUser, user);
+        await this.db.connection.getRepository(UserEntity).save(oldUser);
+        await this.db.close();
+        return oldUser;
+      }
+      return oldUser;
+    }
+    catch(error) {
+      console.log(error);
+    }
+  }
 }
