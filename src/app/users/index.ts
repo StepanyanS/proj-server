@@ -6,10 +6,8 @@ import { UsersController } from './users.controller';
 
 // import providers
 import { UsersService } from './users.service';
-import { UserEntity } from '../entities/user.entity';
 
 const db = new Datebase();
-const userEntity = new UserEntity();
-const usersService = new UsersService(db, userEntity);
+const usersService = new UsersService(db);
 
 export const usersController = new UsersController(usersService);

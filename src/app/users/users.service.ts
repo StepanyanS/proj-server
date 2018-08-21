@@ -1,8 +1,10 @@
 // import modules
 import { Connection } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 // import models
 import { IUser } from '../models/user';
+import { IError } from './../models/error.d';
 import { IRest } from '../models/rest';
 
 // import db
@@ -27,73 +29,133 @@ export class UsersService {
    * @memberof UsersService
    */
   constructor(
-    private db: Datebase,
-    private userEntity: UserEntity
+    private db: Datebase
   ) {}
 
 
-  /**
-   * @description gets user from db
-   * @param {string} email
-   * @returns {Promise<UserEntity>}
-   * @memberof UsersService
-   */
-  async getUserByEmail(email: string, dbConnect: boolean = false): Promise<false | UserEntity> {
+  async addUser(user: IUser): Promise<UserEntity | IError> {
+    return this.db.connect().then(async (connection: Connection | false): Promise<UserEntity | IError> => {
+      if(connection) {
+        try {
+          let checkedUser = await connection.getRepository(UserEntity).findOne({email: user.email});
+          if(checkedUser) {
+            await connection.close();
+            console.log('DB connection is closed');
+            const error: IError = {
+              type: 'Access denied.',
+              statusCode: 403,
+              message: 'The user with entered email is already exists'
+            }
+          }
+
+          checkedUser = await connection.getRepository(UserEntity).findOne({name: user.name});
+          if(checkedUser) {
+            await connection.close();
+            console.log('DB connection is closed');
+            const error: IError = {
+              type: 'Access denied.',
+              statusCode: 403,
+              message: 'The user with entered name is already exists'
+            }
+          }
+
+          const saltRounds = 10;
+          const hash = await bcrypt.hash(user.password, saltRounds);
+          user.password = hash;
+          const userEntity = new UserEntity();
+          Object.assign(userEntity, user);
+          await connection.getRepository(UserEntity).save(userEntity);
+          await connection.close();
+          console.log('DB connection is closed');
+          return userEntity;
+        }
+        catch(err) {
+          await connection.close();
+          console.log('DB connection is closed');
+          const error: IError = {
+            type: 'Bad Gateway',
+            statusCode: 502,
+            message: 'Something went wrong'
+          }
+          return error;
+        }
+      }
+      const error: IError = {
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Cannot connect database'
+      }
+      return error;
+    }).catch(error => error);
+  }
+
+
+  async getUser(user: IUser, dbConnect: boolean = false): Promise<IError | UserEntity> {
     return this.db.connect().then(async (connection: Connection) => {
       if(connection) {
-        const user: UserEntity = await connection.getRepository(UserEntity).findOne({email: email});
+        const result: UserEntity = await connection.getRepository(UserEntity).findOne({email: user.email});
         if(!dbConnect) {
           await connection.close();
           console.log('DB connection is closed');
         }
-        return typeof user !== 'undefined' && user !== null ? user : false;
+        if(!result) {
+          const error: IError = {
+            type: 'unauthorized',
+            statusCode: 401,
+            message: 'Incorrect username or password.'
+          }
+          return error;
+        }
+        const match = await bcrypt.compare(user.password, result.password);
+        if(!match) {
+          const error: IError = {
+            type: 'unauthorized',
+            statusCode: 401,
+            message: 'Incorrect username or password.'
+          }
+          return error;
+        }
+        return result;
       }
-      return false;
+
+      const error: IError = {
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Cannot connect database'
+      }
+      return error;
     }).catch(error => error);
   }
 
 
-  /**
-   * @description adds user to db
-   * @param {UserEntity} user
-   * @returns {Promise<UserEntity>}
-   * @memberof UsersService
-   */
-  async addUser(user: IUser): Promise<UserEntity | false> {
-    return this.db.connect().then(async (connection) => {
-      if(connection) {
-        Object.assign(this.userEntity, user);
-        await connection.getRepository(UserEntity).save(this.userEntity);
-        await connection.close();
-        console.log('DB connection is closed');
-        return user;
-      }
-      else {
-        return false;
-      }
-    }).catch(error => error);
-  }
-
-
-  /**
-   * @description edits user in db
-   * @param {IUser} user
-   * @returns {Promise<UserEntity>}
-   * @memberof UsersService
-   */
-  async editUser(user: IUser): Promise<UserEntity | false> {
+  async editUser(user: IUser): Promise<UserEntity | IError> {
     try {
-      const oldUser: UserEntity | false = await this.getUserByEmail(user.email, true);
-      if(oldUser) {
-        Object.assign(oldUser, user);
-        await this.db.connection.getRepository(UserEntity).save(oldUser);
+      const userToEdit: UserEntity | IError = await this.getUser(user, true);
+      if(userToEdit instanceof UserEntity) {
+        const saltRounds = 10;
+        const hash = await bcrypt.hash(user.editedPassword, saltRounds);
+        await this.db.connection.getRepository(UserEntity).update(userToEdit.id, { password: hash, name: user.name});
         await this.db.close();
-        return oldUser;
+        return userToEdit;
       }
-      return oldUser;
+      const error: IError = {
+        type: 'Unauthorized',
+        statusCode: 403,
+        message: 'Access denied'
+      }
+      return error;
     }
-    catch(error) {
-      console.log(error);
+    catch(err) {
+      const error: IError = {
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Cannot connect database'
+      }
+      return error;
     }
+  }
+
+  async deleteUser(param): Promise<boolean> {
+    
   }
 }

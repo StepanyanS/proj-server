@@ -6,6 +6,7 @@ import { UsersService } from "./users.service";
 
 // import models
 import { IUser } from './../models/user.d';
+import { IError } from './../models/error.d';
 
 /**
  * @description User Controller instance
@@ -23,47 +24,39 @@ export class UsersController {
     private usersService: UsersService
   ) {}
 
-  
-  /**
-   * @description gets User by provider 
-   * @param {Request} req
-   * @param {Response} res
-   * @memberof UsersController
-   */
+
+  addUser(req: Request, res: Response): void {
+    this.usersService.addUser(req.body)
+    .then((result: IUser | IError) => res.status(201).send(result))
+    .catch(error => res.status(401).send(false));
+  }
+
   getUser(req: Request, res: Response): void {
-    this.usersService.getUserByEmail(req.query['email'])
+    const user = {
+      email: req.query['email'],
+      password: req.query['password'],
+      name: ''
+    }
+    this.usersService.getUser(user)
     .then((result) => {
       result ? res.send(result) : res.status(401).send(result);
     })
     .catch(error => res.status(401).send(false));
   }
 
-  
-  /**
-   * @description adds User by provider
-   * @param {Request} req
-   * @param {Response} res
-   * @memberof UsersController
-   */
-  addUser(req: Request, res: Response): void {
-    this.usersService.addUser(req.body)
-    .then((user: IUser | false) => res.status(201).send(user))
-    .catch(error => res.status(401).send(false));
-  }
 
-
-  /**
-   * @description edits User by provider
-   * @param {Request} req
-   * @param {Response} res
-   * @memberof UsersController
-   */
   editUser(req: Request, res: Response): void {
     this.usersService.editUser(req.body)
-    .then((result: IUser | false) => {
+    .then((result: IUser | IError) => {
       result ? res.status(201).send(result) : res.status(401).send(result);
     })
     .catch(error => console.log(error));
+  }
+
+  deleteUser(req: Request, res: Response): boolean {
+    this.usersService.deleteUser(req.body)
+    .then((result: boolean) => result)
+    .catch(error => false);
   }
   
 }

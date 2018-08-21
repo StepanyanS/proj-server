@@ -10,10 +10,14 @@ export class UsersRouter extends Routing {
   }
 
   route(): void {
-    this.router.get('/', usersController.getUser.bind(usersController));
 
-    this.router.put('/', usersController.editUser.bind(usersController));
+    this.router.post('/', usersController.addUser.bind(usersController));   // Create
+
+    this.router.get('/', usersController.getUser.bind(usersController));    // Read
+
+    this.router.put('/', usersController.editUser.bind(usersController));   // Update
+
+    this.router.delete('/', usersController.deleteUser.bind(usersController));   // Delete
     
-    this.router.post('/', usersController.addUser.bind(usersController));
   }
 }
