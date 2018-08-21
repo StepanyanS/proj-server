@@ -32,11 +32,10 @@ export class UsersController {
    */
   getUser(req: Request, res: Response): void {
     this.usersService.getUserByEmail(req.query['email'])
-    .then((user) => {
-      console.log(user);
-      res.send(user)
+    .then((result) => {
+      result ? res.send(result) : res.status(401).send(result);
     })
-    .catch(error => res.send(false));
+    .catch(error => res.status(401).send(false));
   }
 
   
@@ -48,8 +47,8 @@ export class UsersController {
    */
   addUser(req: Request, res: Response): void {
     this.usersService.addUser(req.body)
-    .then((user: IUser) => res.status(201).send(user))
-    .catch(error => console.log(error));
+    .then((user: IUser | false) => res.status(201).send(user))
+    .catch(error => res.status(401).send(false));
   }
 
 
@@ -60,9 +59,11 @@ export class UsersController {
    * @memberof UsersController
    */
   editUser(req: Request, res: Response): void {
-    // this.usersService.editUser(req.body)
-    // .then((user: IUser) => res.status(201).send(user))
-    // .catch(error => console.log(error));
+    this.usersService.editUser(req.body)
+    .then((result: IUser | false) => {
+      result ? res.status(201).send(result) : res.status(401).send(result);
+    })
+    .catch(error => console.log(error));
   }
   
 }

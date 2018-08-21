@@ -9,7 +9,7 @@ import { IDB } from '../models/db';
  * @export
  * @class Datebase
  */
-export class Datebase {
+export class Datebase implements IDB {
 
   connection: Connection;
 
@@ -24,7 +24,7 @@ export class Datebase {
    * @returns {Promise<Connection>}
    * @memberof Datebase
    */
-  async connect(): Promise<any> {
+  async connect(): Promise<Connection | false> {
     try {
       this.connection = await createConnection();
       console.log('Connected to DB');
@@ -41,9 +41,13 @@ export class Datebase {
    * @returns {Promise<Connection>}
    * @memberof Datebase
    */
-  async close(): Promise<Connection> {
-    await this.connection.close();
-    console.log('DB connection is closed');
-    return this.connection;
+  async close(): Promise<void> {
+    try {
+      await this.connection.close();
+      console.log('DB connection is closed');
+    }
+    catch(error) {
+      console.log(error);
+    }
   }
 }
