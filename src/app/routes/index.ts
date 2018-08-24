@@ -1,10 +1,9 @@
+// import abstract classes
 import { Routing } from './routing';
 
+// import routers
 import { UsersRouter } from './users-router';
 import { ProjectsRouter } from './projects-router';
-
-const usersrouter = new UsersRouter();
-const projectsRouter = new ProjectsRouter
 
 export class Routes extends Routing {
 
@@ -13,6 +12,10 @@ export class Routes extends Routing {
   }
 
   route(): void {
+
+    const usersrouter = new UsersRouter();
+    const projectsRouter = new ProjectsRouter();
+
     this.router.get('/', () => {}).use('/users/', usersrouter.router);
 
     this.router.get('/', () => {}).use('/projects/', projectsRouter.router);

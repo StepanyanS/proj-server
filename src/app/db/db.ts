@@ -7,9 +7,9 @@ import { IDB } from '../models/db';
 /**
  * @description Database instance
  * @export
- * @class Datebase
+ * @class Database
  */
-export class Datebase implements IDB {
+export class Database implements IDB {
 
   connection: Connection;
 

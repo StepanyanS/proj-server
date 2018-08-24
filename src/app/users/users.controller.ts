@@ -27,17 +27,21 @@ export class UsersController {
 
   addUser(req: Request, res: Response): void {
     this.usersService.addUser(req.body)
-    .then((result: IUser | IError) => res.status(201).send(result))
+    .then((result: IError | boolean) => {
+      if (!result) res.status(502).send(result);
+      else if(typeof result !== 'boolean') {
+        res.status(result.statusCode).send(result);
+      }
+      else {
+        res.status(201).send(true);
+      }
+    })
     .catch(error => res.status(401).send(false));
   }
 
   getUser(req: Request, res: Response): void {
-    const user = {
-      email: req.query['email'],
-      password: req.query['password'],
-      name: ''
-    }
-    this.usersService.getUser(user)
+    console.log(req.body);
+    this.usersService.getUser(req.body)
     .then((result) => {
       result ? res.send(result) : res.status(401).send(result);
     })
@@ -46,17 +50,34 @@ export class UsersController {
 
 
   editUser(req: Request, res: Response): void {
-    this.usersService.editUser(req.body)
-    .then((result: IUser | IError) => {
-      result ? res.status(201).send(result) : res.status(401).send(result);
-    })
-    .catch(error => console.log(error));
+    // this.usersService.editUser(req.body)
+    // .then((result: IUser | IError) => {
+    //   result ? res.status(201).send(result) : res.status(401).send(result);
+    // })
+    // .catch(error => console.log(error));
   }
 
-  deleteUser(req: Request, res: Response): boolean {
-    this.usersService.deleteUser(req.body)
-    .then((result: boolean) => result)
-    .catch(error => false);
+  async deleteUser(req: Request, res: Response): Promise<void> {
+    try {
+      const result: boolean = await this.usersService.deleteUser(req.body);
+      result ? res.status(201).send(result) : res.send(result);
+    }
+    catch(error) {
+      res.status(401).send(false);
+    }
+  }
+
+  async login(req: Request, res: Response) {
+    this.usersService.login(req.body)
+    .then((result: string | IError | boolean) => {
+      if(!result) res.status(502).send(result);
+      else if(typeof result !== 'string' && typeof result !== 'boolean') {
+        res.status(result.statusCode).send(result);
+      }
+      else {
+        res.status(201).send(result);
+      }
+    })
   }
   
 }
