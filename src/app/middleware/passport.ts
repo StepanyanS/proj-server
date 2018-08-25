@@ -20,16 +20,20 @@ interface IOPt {
 
 //   use() {
     const options = {
-      secretOrKey: 'sasun',
+      secretOrKey: 'secretKey',
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
     };
     
     passport.use(new Strategy(options, async (jwt_payload, done) => {
       
-      const result = await usersService.findById(jwt_payload.id);
-      
-      if(!result) return done(result, result);
-      return done(null, result);
+      try {
+        const result = await usersService.findById(jwt_payload.id);
+        if(typeof result === 'boolean') return done(false, false);
+        return done(null, result.id);
+      }
+      catch(err) {
+        return done(err, false);
+      }
     }));
 //   }
 // }

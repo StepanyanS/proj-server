@@ -40,10 +40,9 @@ export class UsersController {
   }
 
   getUser(req: Request, res: Response): void {
-    console.log(req.body);
-    this.usersService.getUser(req.body)
+    this.usersService.getUser(req.user)
     .then((result) => {
-      result ? res.send(result) : res.status(401).send(result);
+      result ? res.status(201).send(result) : res.status(401).send(result);
     })
     .catch(error => res.status(401).send(false));
   }
@@ -75,7 +74,9 @@ export class UsersController {
         res.status(result.statusCode).send(result);
       }
       else {
-        res.status(201).send(result);
+        res.status(201).send({
+          token: result
+        });
       }
     })
   }

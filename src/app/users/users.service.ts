@@ -46,7 +46,6 @@ export class UsersService {
   private createToken(id: number): string {
     const expiresIn = 3600;
     const user: JwtPayload = { id: id };
-    let token = '';
     return jwt.sign(user, 'secretKey', { expiresIn: expiresIn});
   }
 
@@ -122,6 +121,8 @@ export class UsersService {
             statusCode: 422,
             message: 'Cannot get user data'
           }
+          await connection.close();
+          console.log('DB connection is closed');
           return error;
         }
 
@@ -130,6 +131,8 @@ export class UsersService {
           name: result.name
         };
 
+        await connection.close();
+        console.log('DB connection is closed');
         return userData;
       }
 
@@ -247,15 +250,16 @@ export class UsersService {
     }).catch(error => false);
   }
 
-  async findById(id: string) {
-    return this.db.connect().then(async (connection) => {
+  async findById(id: number): Promise<UserEntity | boolean> {
+    return this.db.connect().then(async (connection): Promise<UserEntity | false> => {
       if(!connection) return false;
-      const result = await connection.getRepository(UserEntity).findOne(id);
+      const result: UserEntity = await connection.getRepository(UserEntity).findOne(id);
       await connection.close();
       console.log('DB connection is closed');
-      if(!result) return false;
-    }).catch(error => {
-      return false;
-    })
+      if(!result) {
+        return false;
+      }
+      return result;
+    }).catch(err => false);
   }
 }
