@@ -3,5 +3,5 @@ export interface IUser {
   password: string;
   name: string;
   id?: number;
-  editedPassword?: string
+  newPassword?: string
 }

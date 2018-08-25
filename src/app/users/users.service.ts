@@ -11,16 +11,25 @@ import { IRest } from '../models/rest';
 // import db
 import { Database } from '../db/db';
 
-// import entitie
+// import entities
 import { UserEntity } from '../entities/user.entity';
 
 interface JwtPayload {
   id: number;
 }
 
-interface IUserWeb {
-  email: string,
-  name: string
+export abstract class User {
+  email: string;
+  name: string;
+}
+
+class UserWeb extends User {
+
+  constructor(email: string, name: string) {
+    super();
+    this.email = email;
+    this.name = name;
+  }
 }
 
 
@@ -50,6 +59,12 @@ export class UsersService {
   }
 
 
+  /**
+   * @description Adds user in database
+   * @param {IUser} user
+   * @returns {(Promise<boolean | IError>)}
+   * @memberof UsersService
+   */
   async addUser(user: IUser): Promise<boolean | IError> {
     return this.db.connect().then(async (connection: Connection | false): Promise<boolean | IError> => {
       if(connection) {
@@ -111,8 +126,14 @@ export class UsersService {
   }
 
 
-  async getUser(id: number): Promise<IError | IUserWeb | boolean> {
-    return this.db.connect().then(async (connection: Connection): Promise<IError | IUserWeb | boolean> => {
+  /**
+   * @description Gets user data from database
+   * @param {number} id
+   * @returns {(Promise<IError | IUserWeb | boolean>)}
+   * @memberof UsersService
+   */
+  async getUser(id: number): Promise<IError | UserWeb | boolean> {
+    return this.db.connect().then(async (connection: Connection): Promise<IError | UserWeb | boolean> => {
       if(connection) {
         const result: UserEntity = await connection.getRepository(UserEntity).findOne({id: id});
         if(!result) {
@@ -126,10 +147,7 @@ export class UsersService {
           return error;
         }
 
-        const userData: IUserWeb = {
-          email: result.email,
-          name: result.name
-        };
+        const userData: UserWeb = new UserWeb(result.email, result.name);
 
         await connection.close();
         console.log('DB connection is closed');
@@ -146,32 +164,35 @@ export class UsersService {
   }
 
 
-  // async editUser(user: IUser): Promise<UserEntity | IError> {
-  //   try {
-  //     const userToEdit: UserEntity | IError = await this.getUser(user, true);
-  //     if(userToEdit instanceof UserEntity) {
-  //       const saltRounds = 10;
-  //       const hash = await bcrypt.hash(user.editedPassword, saltRounds);
-  //       await this.db.connection.getRepository(UserEntity).update(userToEdit.id, { password: hash, name: user.name});
-  //       await this.db.close();
-  //       return userToEdit;
-  //     }
-  //     const error: IError = {
-  //       type: 'Unauthorized',
-  //       statusCode: 403,
-  //       message: 'Access denied'
-  //     }
-  //     return error;
-  //   }
-  //   catch(err) {
-  //     const error: IError = {
-  //       type: 'Bad Gateway',
-  //       statusCode: 502,
-  //       message: 'Cannot connect database'
-  //     }
-  //     return error;
-  //   }
-  // }
+  async editUser(user: IUser, id: number): Promise<UserWeb | IError> {
+    try {
+      const userToEdit: UserEntity | false = await this.findById(id, true);
+      if(!userToEdit) {
+        const error: IError = {
+          type: 'Bad Gateway',
+          statusCode: 502,
+          message: 'Something went wrong'
+        }
+        await this.db.close();
+        return error;
+      }
+      const saltRounds = 10;
+      const hash = await bcrypt.hash(user.newPassword, saltRounds);
+      await this.db.connection.getRepository(UserEntity).update(id, { password: hash, name: user.name});
+      await this.db.close();
+      const editedUser: UserWeb = new UserWeb(user.email, user.name);
+      return editedUser;
+    }
+    catch(err) {
+      const error: IError = {
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Something went wrong'
+      }
+      await this.db.close();
+      return error;
+    }
+  }
 
   async deleteUser(param): Promise<boolean> {
     return this.db.connect().then(async (connection) => {
@@ -185,6 +206,14 @@ export class UsersService {
     })
   }
 
+
+
+  /**
+   * @description Login user by email and password
+   * @param {IUser} user
+   * @returns {(Promise<string | IError | boolean>)}
+   * @memberof UsersService
+   */
   async login(user: IUser): Promise<string | IError | boolean> {
     return this.db.connect().then(async (connection: Connection | false): Promise<string | IError | boolean> => {
       if(connection) {
@@ -250,16 +279,24 @@ export class UsersService {
     }).catch(error => false);
   }
 
-  async findById(id: number): Promise<UserEntity | boolean> {
+
+
+  /**
+   * @description Finds user by ID
+   * @param {number} id
+   * @returns {(Promise<UserEntity | boolean>)}
+   * @memberof UsersService
+   */
+  async findById(id: number, keepConnection: boolean = false): Promise<UserEntity | false> {
     return this.db.connect().then(async (connection): Promise<UserEntity | false> => {
       if(!connection) return false;
       const result: UserEntity = await connection.getRepository(UserEntity).findOne(id);
-      await connection.close();
-      console.log('DB connection is closed');
-      if(!result) {
-        return false;
+      if(!keepConnection) {
+        await connection.close();
+        console.log('DB connection is closed');
       }
+      if(!result) return false;
       return result;
-    }).catch(err => false);
+    }).catch((err): false => false);
   }
 }

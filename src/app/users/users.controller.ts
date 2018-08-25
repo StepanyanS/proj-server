@@ -2,10 +2,10 @@
 import { Request, Response } from 'express';
 
 // import providers
-import { UsersService } from "./users.service";
+import { UsersService, User } from "./users.service";
 
 // import models
-import { IUser } from './../models/user.d';
+import { IUser,  } from './../models/user.d';
 import { IError } from './../models/error.d';
 
 /**
@@ -39,6 +39,7 @@ export class UsersController {
     .catch(error => res.status(401).send(false));
   }
 
+
   getUser(req: Request, res: Response): void {
     this.usersService.getUser(req.user)
     .then((result) => {
@@ -48,12 +49,17 @@ export class UsersController {
   }
 
 
-  editUser(req: Request, res: Response): void {
-    // this.usersService.editUser(req.body)
-    // .then((result: IUser | IError) => {
-    //   result ? res.status(201).send(result) : res.status(401).send(result);
-    // })
-    // .catch(error => console.log(error));
+  async editUser(req: Request, res: Response): Promise<void> {
+    this.usersService.editUser(req.body, req.user)
+    .then((result: User | IError) => {
+      if(result instanceof User) res.status(201).send(result);
+      else res.status(result.statusCode).send(result.message);
+    })
+    .catch(error => res.status(502).send({
+      type: 'Bad Gateway',
+      statusCode: 502,
+      message: 'Something went wrong'
+    }));
   }
 
   async deleteUser(req: Request, res: Response): Promise<void> {

@@ -19,10 +19,11 @@ export class Database implements IDB {
    */
   constructor() {}
 
+  
   /**
-   * @description Creates connection to database
-   * @returns {Promise<Connection>}
-   * @memberof Datebase
+   * @description Creates a connection to database
+   * @returns {(Promise<Connection | false>)}
+   * @memberof Database
    */
   async connect(): Promise<Connection | false> {
     try {
@@ -38,8 +39,8 @@ export class Database implements IDB {
   
   /**
    * @description Closes connection to database
-   * @returns {Promise<Connection>}
-   * @memberof Datebase
+   * @returns {Promise<void>}
+   * @memberof Database
    */
   async close(): Promise<void> {
     try {

@@ -28,7 +28,7 @@ interface IOPt {
       
       try {
         const result = await usersService.findById(jwt_payload.id);
-        if(typeof result === 'boolean') return done(false, false);
+        if(!result) return done(false, false);
         return done(null, result.id);
       }
       catch(err) {
