@@ -25,7 +25,7 @@ export class UsersController {
   ) {}
 
 
-  addUser(req: Request, res: Response): void {
+  async addUser(req: Request, res: Response): Promise<void> {
     this.usersService.addUser(req.body)
     .then((result: IError | boolean) => {
       if (!result) res.status(502).send(result);
@@ -40,7 +40,7 @@ export class UsersController {
   }
 
 
-  getUser(req: Request, res: Response): void {
+  async getUser(req: Request, res: Response): Promise<void> {
     this.usersService.getUser(req.user)
     .then((result) => {
       result ? res.status(201).send(result) : res.status(401).send(result);
@@ -62,6 +62,7 @@ export class UsersController {
     }));
   }
 
+  
   async deleteUser(req: Request, res: Response): Promise<void> {
     try {
       const result: boolean = await this.usersService.deleteUser(req.body);
@@ -72,7 +73,8 @@ export class UsersController {
     }
   }
 
-  async login(req: Request, res: Response) {
+
+  async login(req: Request, res: Response): Promise<void> {
     this.usersService.login(req.body)
     .then((result: string | IError | boolean) => {
       if(!result) res.status(502).send(result);
