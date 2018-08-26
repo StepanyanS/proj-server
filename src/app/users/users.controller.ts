@@ -36,16 +36,29 @@ export class UsersController {
         res.status(201).send(true);
       }
     })
-    .catch(error => res.status(401).send(false));
+    .catch(error => res.status(502).send({
+      type: 'Bad Gateway',
+      statusCode: 502,
+      message: 'Something went wrong'
+    }));
   }
 
 
   async getUser(req: Request, res: Response): Promise<void> {
     this.usersService.getUser(req.user)
-    .then((result) => {
-      result ? res.status(201).send(result) : res.status(401).send(result);
+    .then((result: IError | User): void => {
+      if(result instanceof User) {
+        res.status(201).send(result)
+      }
+      else {
+        res.status(result.statusCode).send(result.message);
+      }
     })
-    .catch(error => res.status(401).send(false));
+    .catch(error => res.status(502).send({
+      type: 'Bad Gateway',
+      statusCode: 502,
+      message: 'Something went wrong'
+    }));
   }
 
 
@@ -55,31 +68,35 @@ export class UsersController {
       if(result instanceof User) res.status(201).send(result);
       else res.status(result.statusCode).send(result.message);
     })
-    .catch(error => res.status(502).send({
-      type: 'Bad Gateway',
-      statusCode: 502,
-      message: 'Something went wrong'
-    }));
+    .catch(error => res.status(502).send('Something went wrong'));
   }
 
   
   async deleteUser(req: Request, res: Response): Promise<void> {
     try {
-      const result: boolean = await this.usersService.deleteUser(req.body);
-      result ? res.status(201).send(result) : res.send(result);
+      const result: boolean | IError = await this.usersService.deleteUser(req.body);
+      if(typeof result === 'boolean') {
+        res.status(201).send(result);
+      }
+      else {
+        res.status(result.statusCode).send(result.message);
+      }
     }
     catch(error) {
-      res.status(401).send(false);
+      res.status(502).send({
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Something went wrong'
+      });
     }
   }
 
 
   async login(req: Request, res: Response): Promise<void> {
     this.usersService.login(req.body)
-    .then((result: string | IError | boolean) => {
-      if(!result) res.status(502).send(result);
-      else if(typeof result !== 'string' && typeof result !== 'boolean') {
-        res.status(result.statusCode).send(result);
+    .then((result: string | IError) => {
+      if(typeof result !== 'string') {
+        res.status(result.statusCode).send(result.message);
       }
       else {
         res.status(201).send({
@@ -87,6 +104,11 @@ export class UsersController {
         });
       }
     })
+    .catch(error => res.status(502).send({
+      type: 'Bad Gateway',
+      statusCode: 502,
+      message: 'Something went wrong'
+    }));
   }
   
 }

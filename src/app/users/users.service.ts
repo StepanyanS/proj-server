@@ -129,11 +129,11 @@ export class UsersService {
   /**
    * @description Gets user data from database
    * @param {number} id
-   * @returns {(Promise<IError | IUserWeb | boolean>)}
+   * @returns {(Promise<IError | UserWeb | boolean>)}
    * @memberof UsersService
    */
-  async getUser(id: number): Promise<IError | UserWeb | boolean> {
-    return this.db.connect().then(async (connection: Connection): Promise<IError | UserWeb | boolean> => {
+  async getUser(id: number): Promise<IError | UserWeb> {
+    return this.db.connect().then(async (connection: Connection): Promise<IError | UserWeb> => {
       if(connection) {
         const result: UserEntity = await connection.getRepository(UserEntity).findOne({id: id});
         if(!result) {
@@ -160,7 +160,14 @@ export class UsersService {
         message: 'Cannot connect database'
       }
       return error;
-    }).catch(error => false);
+    }).catch(err => {
+      const error: IError = {
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Something went wrong'
+      }
+      return error;
+    });
   }
 
 
@@ -194,16 +201,38 @@ export class UsersService {
     }
   }
 
-  async deleteUser(param): Promise<boolean> {
+  async deleteUser(param): Promise<IError | boolean> {
     return this.db.connect().then(async (connection) => {
-      if(!connection) return false;
-      await connection.getRepository(UserEntity).delete({email: param.user.email});
-      await connection.close();
-      console.log('DB connection is closed');
-      return true;
-    }).catch(error => {
-      return false;
-    })
+      if(!connection) {
+        const error: IError = {
+          type: 'Bad Gateway',
+          statusCode: 502,
+          message: 'Cannot connect database'
+        };
+        return error;
+      }
+      try {
+        await connection.getRepository(UserEntity).delete({email: param.user.email});
+        await connection.close();
+        console.log('DB connection is closed');
+        return true;
+      }
+      catch(err) {
+        const error: IError = {
+          type: 'Bad Gateway',
+          statusCode: 502,
+          message: 'Something went wrong'
+        };
+        return error;
+      }
+    }).catch(err => {
+      const error: IError = {
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Cannot connect database'
+      };
+      return error;
+    });
   }
 
 
@@ -211,11 +240,11 @@ export class UsersService {
   /**
    * @description Login user by email and password
    * @param {IUser} user
-   * @returns {(Promise<string | IError | boolean>)}
+   * @returns {(Promise<string | IError>)}
    * @memberof UsersService
    */
-  async login(user: IUser): Promise<string | IError | boolean> {
-    return this.db.connect().then(async (connection: Connection | false): Promise<string | IError | boolean> => {
+  async login(user: IUser): Promise<string | IError> {
+    return this.db.connect().then(async (connection: Connection | false): Promise<string | IError> => {
       if(connection) {
         try {
           const userFound = await connection.getRepository(UserEntity).findOne({email: user.email});
@@ -276,7 +305,14 @@ export class UsersService {
         message: 'Cannot connect to database'
       }
       return error;
-    }).catch(error => false);
+    }).catch(err => {
+      const error: IError = {
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Something went wrong'
+      }
+      return error;
+    });
   }
 
 
@@ -284,7 +320,7 @@ export class UsersService {
   /**
    * @description Finds user by ID
    * @param {number} id
-   * @returns {(Promise<UserEntity | boolean>)}
+   * @returns {(Promise<UserEntity | false>)}
    * @memberof UsersService
    */
   async findById(id: number, keepConnection: boolean = false): Promise<UserEntity | false> {

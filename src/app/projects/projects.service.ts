@@ -36,8 +36,8 @@ export class ProjectsService {
    * @returns {string}
    * @memberof ProjectsService
    */
-  private getNewProjectDir(name: string): string {
-    return resolve(__dirname, newProjectDir, name);
+  private getNewProjectDir(id: number, name: string): string {
+    return resolve(__dirname, newProjectDir, id.toString(), name);
   }
 
 
@@ -49,8 +49,8 @@ export class ProjectsService {
    * @returns {string}
    * @memberof ProjectsService
    */
-  private getVariablesFilePath(projectName: string, SassFile): string {
-    return resolve(__dirname, `../../assets/deliver/${projectName}/src/assets/scss/utilities/_${SassFile}.scss`);
+  private getVariablesFilePath(id: number, projectName: string, SassFile): string {
+    return resolve(__dirname, `../../assets/deliver/${id}/${projectName}/src/assets/scss/utilities/_${SassFile}.scss`);
   }
 
   
@@ -61,9 +61,9 @@ export class ProjectsService {
    * @returns {Promise<void>}
    * @memberof ProjectsService
    */
-  private async copyProject(projectName: string): Promise<void> {
+  private async copyProject(id: number, projectName: string): Promise<void> {
     try {
-      await fse.copy(mainProjectDir, this.getNewProjectDir(projectName));
+      await fse.copy(mainProjectDir, this.getNewProjectDir(id, projectName));
       console.log('Copied!');
     } catch (err) {
       console.error(err);
@@ -83,6 +83,7 @@ export class ProjectsService {
     try {
       const wrStream: WriteStream = createWriteStream(variablesFile);
       await wrStream.write(data);
+      wrStream.close();
       console.log('Variables written!');
     } catch (err) {
       console.error(err);
@@ -97,15 +98,15 @@ export class ProjectsService {
    * @returns {Promise<boolean>}
    * @memberof ProjectsService
    */
-  private makeZip(projectName: string): Promise<boolean> {
+  private makeZip(id: number, projectName: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const archiverOptions = {
         zlib: { level: 9 }
       }
   
       const archive = archiver('zip', archiverOptions);
-      const output: WriteStream = createWriteStream(`${newProjectDir}/${projectName}.zip`);
-      const project: string = this.getNewProjectDir(projectName);
+      const output: WriteStream = createWriteStream(`${newProjectDir}/${id}/${projectName}.zip`);
+      const project: string = this.getNewProjectDir(id, projectName);
   
       archive.pipe(output);
       archive.directory(project, false);
@@ -123,7 +124,15 @@ export class ProjectsService {
         }
       });
   
-      output.on('close', () => resolve(true));
+      output.on('close', async () => {
+        try {
+          await fse.remove(this.getNewProjectDir(id, projectName));
+          resolve(true);
+        }
+        catch(err) {
+          console.log(err);
+        }
+      });
       archive.on('error', (err) => reject(err));
     })
   }
@@ -135,7 +144,7 @@ export class ProjectsService {
    * @returns {Promise<boolean>}
    * @memberof ProjectsService
    */
-  async createProject(project: IProject): Promise<boolean> {
+  async createProject(project: IProject, userId: number): Promise<boolean> {
 
     const colorsSources = {
       primary: 'red',
@@ -143,9 +152,9 @@ export class ProjectsService {
     };
 
     try {
-      await this.copyProject(project.name);
-      await this.writeVariablesData(this.getVariablesFilePath(project.name, 'variables'), this.generateVariables.getColorsData(project.colors, colorsSources));
-      return this.makeZip(project.name)
+      await this.copyProject(userId, project.name);
+      await this.writeVariablesData(this.getVariablesFilePath(userId, project.name, 'variables'), this.generateVariables.getColorsData(project.colors, colorsSources));
+      return this.makeZip(userId, project.name)
       .then(res => res)
       .catch(error => error);
     } catch(error) {

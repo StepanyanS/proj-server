@@ -13,7 +13,7 @@ export class ProjectsController {
 
 
   /**
-   * @description Creates an instance of ProjectsController.
+   * @description Creates an instance of ProjectsController
    * @param {ProjectsService} projectsService
    * @memberof ProjectsController
    */
@@ -29,7 +29,7 @@ export class ProjectsController {
    * @memberof ProjectsController
    */
   public createProject(req: Request, res: Response): void {
-    this.projectsService.createProject(req.body).then((isCreated) => {
+    this.projectsService.createProject(req.body, req.user).then((isCreated) => {
       res.status(201).send(isCreated);
     });
   }
@@ -42,7 +42,7 @@ export class ProjectsController {
    * @memberof ProjectsController
    */
   public downloadProject(req: Request, res: Response) {
-    const file = `${newProjectDir}/${req.query.projectName}.zip`;
+    const file = `${newProjectDir}/${req.user}/${req.query.projectName}.zip`;
     res.download(file);
     console.log('Downloaded');
   }

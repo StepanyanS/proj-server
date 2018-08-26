@@ -38,7 +38,7 @@ export class UsersRouter extends Routing {
 
     this.router.delete('/',    mypassport.authenticate('jwt', { session: false }), usersController.deleteUser.bind(usersController)); // Delete
 
-    this.router.post('/login', usersController.login.bind(usersController));                                                  // Login
+    this.router.post('/login', usersController.login.bind(usersController));                                                          // Login
     
   }
 }
