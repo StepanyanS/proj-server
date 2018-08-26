@@ -3,7 +3,10 @@ import { createWriteStream, WriteStream } from 'fs';
 import * as fse from 'fs-extra';
 import { resolve } from 'path';
 import * as archiver from 'archiver';
+import { Connection } from 'typeorm';
 
+import { Database } from '../db/db';
+import { ProjectEntity } from './../entities/project.entity';
 import { GenerateVariables } from './generate-variables';
 
 // import models
@@ -25,6 +28,7 @@ export class ProjectsService {
    * @memberof ProjectsService
    */
   constructor(
+    private db: Database,
     private generateVariables: GenerateVariables
   ) {}
   
@@ -155,7 +159,18 @@ export class ProjectsService {
       await this.copyProject(userId, project.name);
       await this.writeVariablesData(this.getVariablesFilePath(userId, project.name, 'variables'), this.generateVariables.getColorsData(project.colors, colorsSources));
       return this.makeZip(userId, project.name)
-      .then(res => res)
+      .then(res => {
+        this.db.connect().then(async (connection: Connection) => {
+          const projectEntity: ProjectEntity = new ProjectEntity();
+          projectEntity.userId = userId;
+          projectEntity.name = project.name;
+          projectEntity.date = '';
+          projectEntity.data = '';
+          await connection.getRepository(ProjectEntity).save(projectEntity);
+          await connection.close();
+        });
+        return res;
+      })
       .catch(error => error);
     } catch(error) {
       console.log(error);
