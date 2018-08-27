@@ -2,7 +2,7 @@
 import { Routing } from './routing';
 
 // import middlewares
-import { mypassport } from '../middleware/passport';
+import { passportMiddleware } from '../middleware/passport';
 
 // import constrollers
 import { usersController } from './../users/index';
@@ -30,15 +30,15 @@ export class UsersRouter extends Routing {
    */
   route(): void {
 
-    this.router.post('/',      usersController.addUser.bind(usersController));                                                        // Create
+    this.router.post('/',      usersController.addUser.bind(usersController));                                                                         // Create
 
-    this.router.get('/',       mypassport.authenticate('jwt', { session: false }), usersController.getUser.bind(usersController));    // Read
+    this.router.get('/',       passportMiddleware.passport.authenticate('jwt', { session: false }), usersController.getUser.bind(usersController));    // Read
 
-    this.router.put('/',       mypassport.authenticate('jwt', { session: false }), usersController.editUser.bind(usersController));   // Update
+    this.router.put('/',       passportMiddleware.passport.authenticate('jwt', { session: false }), usersController.editUser.bind(usersController));   // Update
 
-    this.router.delete('/',    mypassport.authenticate('jwt', { session: false }), usersController.deleteUser.bind(usersController)); // Delete
+    this.router.delete('/',    passportMiddleware.passport.authenticate('jwt', { session: false }), usersController.deleteUser.bind(usersController)); // Delete
 
-    this.router.post('/login', usersController.login.bind(usersController));                                                          // Login
+    this.router.post('/login', usersController.login.bind(usersController));                                                                           // Login
     
   }
 }

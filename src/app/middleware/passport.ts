@@ -14,17 +14,21 @@ interface IOPt {
   jwtFromRequest: JwtFromRequestFunction;
 }
 
-// export class PassportMiddleWare {
+export class PassportMiddleWare {
+  passport;
 
-//   constructor() {}
+  constructor() {
+    this.passport = passport;
+    this.useStrategy();
+  }
 
-//   use() {
+  useStrategy(): void {
     const options = {
       secretOrKey: 'secretKey',
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
     };
     
-    passport.use(new Strategy(options, async (jwt_payload, done) => {
+    this.passport.use(new Strategy(options, async (jwt_payload, done) => {
       
       try {
         const result = await usersService.findById(jwt_payload.id);
@@ -35,7 +39,7 @@ interface IOPt {
         return done(err, false);
       }
     }));
-//   }
-// }
+  }
+}
 
-export const mypassport = passport;
+export const passportMiddleware = new PassportMiddleWare();
