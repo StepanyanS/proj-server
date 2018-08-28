@@ -1,6 +1,7 @@
 // import modules
 import { createWriteStream, WriteStream } from 'fs';
-import * as fse from 'fs-extra';
+// import * as fse from 'fs-extra';
+import { copy, remove } from 'fs-extra';
 import { resolve } from 'path';
 import * as archiver from 'archiver';
 import { Connection } from 'typeorm';
@@ -67,7 +68,7 @@ export class ProjectsService {
    */
   private async copyProject(id: number, projectName: string): Promise<void> {
     try {
-      await fse.copy(mainProjectDir, this.getNewProjectDir(id, projectName));
+      await copy(mainProjectDir, this.getNewProjectDir(id, projectName));
       console.log('Copied!');
     } catch (err) {
       console.error(err);
@@ -130,7 +131,7 @@ export class ProjectsService {
   
       output.on('close', async () => {
         try {
-          await fse.remove(this.getNewProjectDir(id, projectName));
+          await remove(this.getNewProjectDir(id, projectName));
           resolve(true);
         }
         catch(err) {

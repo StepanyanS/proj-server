@@ -1,5 +1,4 @@
 import * as express from 'express';
-import { Express } from 'express';
 import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 
@@ -11,7 +10,8 @@ import { passportMiddleware } from './middleware/passport';
 
 export class App {
   routes: Routes;
-  expressApp: Express;
+  expressApp: express.Express;
+  corsOptions: cors.CorsOptions;
 
   constructor() {
     this.routes = new Routes();
@@ -21,11 +21,11 @@ export class App {
 
     this.expressApp = express();
 
-    const corsOptions = {
+    this.corsOptions = {
       optionsSuccessStatus: 200
     };
 
-    this.expressApp.use(cors(corsOptions));
+    this.expressApp.use(cors(this.corsOptions));
     this.expressApp.use(bodyParser.json());
     this.expressApp.use(passportMiddleware.passport.initialize());
 

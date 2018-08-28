@@ -95,8 +95,8 @@ export class UsersService {
 
           if(error) return error;
 
-          const saltRounds = 10;
-          const hash = await bcrypt.hash(user.password, saltRounds);
+          const saltRounds: number = 10;
+          const hash: string = await bcrypt.hash(user.password, saltRounds);
           user.password = hash;
           const userEntity = new UserEntity();
           Object.assign(userEntity, user);
@@ -122,7 +122,14 @@ export class UsersService {
         message: 'Cannot connect database'
       }
       return error;
-    }).catch(error => false);
+    }).catch(err => {
+      const error: IError = {
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Cannot connect database'
+      }
+      return error;
+    });
   }
 
 
