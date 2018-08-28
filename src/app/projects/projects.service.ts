@@ -172,6 +172,7 @@ export class ProjectsService {
           projectEntity.data = '';
           await connection.getRepository(ProjectEntity).save(projectEntity);
           await connection.close();
+          console.log('DB connection is closed');
         });
         return res;
       })
