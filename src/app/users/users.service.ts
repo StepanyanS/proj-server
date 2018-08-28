@@ -6,7 +6,8 @@ import { hash, compare } from 'bcrypt';
 import { createToken } from '../utils/utils';
 
 // import models
-import { IUser, User } from '../models/user';
+import { IUser } from '../models/user.d';
+import { User } from '../models/user';
 import { IError } from './../models/error.d';
 import { IRest } from '../models/rest';
 

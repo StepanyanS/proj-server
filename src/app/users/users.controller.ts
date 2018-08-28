@@ -5,7 +5,7 @@ import { Request, Response } from 'express';
 import { UsersService } from "./users.service";
 
 // import models
-import { User } from './../models/user.d';
+import { User } from './../models/user';
 import { IError } from './../models/error.d';
 
 /**
