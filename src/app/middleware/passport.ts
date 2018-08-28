@@ -1,6 +1,6 @@
 // import modules
-import * as passport from 'passport';
-import { ExtractJwt, Strategy, JwtFromRequestFunction, StrategyOptions } from 'passport-jwt';
+import { use, PassportStatic } from 'passport';
+import { ExtractJwt, Strategy, StrategyOptions } from 'passport-jwt';
 
 // import providers
 import { Database } from '../db/db';
@@ -10,11 +10,10 @@ const db = new Database();
 const usersService = new UsersService(db);
 
 export class PassportMiddleWare {
-  passport: passport.PassportStatic;
+  passport: PassportStatic;
   strategyOptions: StrategyOptions;
 
   constructor() {
-    this.passport = passport;
     this.useStrategy();
   }
 
@@ -24,8 +23,7 @@ export class PassportMiddleWare {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
     };
     
-    this.passport.use(new Strategy(this.strategyOptions, async (jwt_payload, done) => {
-
+    this.passport = use(new Strategy(this.strategyOptions, async (jwt_payload, done) => {
       try {
         const result = await usersService.findById(jwt_payload.id);
         if(!result) return done(false, false);

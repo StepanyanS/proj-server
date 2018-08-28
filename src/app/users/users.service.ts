@@ -1,7 +1,7 @@
 // import modules
 import { Connection } from 'typeorm';
-import * as bcrypt from 'bcrypt';
-import * as jwt from 'jsonwebtoken';
+import { hash, compare } from 'bcrypt';
+import { sign } from 'jsonwebtoken';
 
 // import models
 import { IUser } from '../models/user';
@@ -55,7 +55,7 @@ export class UsersService {
   private createToken(id: number): string {
     const expiresIn = 3600;
     const user: JwtPayload = { id: id };
-    return jwt.sign(user, 'secretKey', { expiresIn: expiresIn});
+    return sign(user, 'secretKey', { expiresIn: expiresIn});
   }
 
 
@@ -96,8 +96,8 @@ export class UsersService {
           if(error) return error;
 
           const saltRounds: number = 10;
-          const hash: string = await bcrypt.hash(user.password, saltRounds);
-          user.password = hash;
+          const passwordHash: string = await hash(user.password, saltRounds);
+          user.password = passwordHash;
           const userEntity = new UserEntity();
           Object.assign(userEntity, user);
           await connection.getRepository(UserEntity).save(userEntity);
@@ -191,8 +191,8 @@ export class UsersService {
         return error;
       }
       const saltRounds = 10;
-      const hash = await bcrypt.hash(user.newPassword, saltRounds);
-      await this.db.connection.getRepository(UserEntity).update(id, { password: hash, name: user.name});
+      const passwordHash = await hash(user.newPassword, saltRounds);
+      await this.db.connection.getRepository(UserEntity).update(id, { password: passwordHash, name: user.name});
       await this.db.close();
       const editedUser: UserWeb = new UserWeb(user.email, user.name);
       return editedUser;
@@ -266,7 +266,7 @@ export class UsersService {
             return error;
           }
           try {
-            const passwordIsValid = await bcrypt.compare(user.password, userFound.password);
+            const passwordIsValid = await compare(user.password, userFound.password);
             if(!passwordIsValid) {
               await connection.close();
               console.log('DB connection is closed');

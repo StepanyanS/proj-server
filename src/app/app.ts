@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as cors from 'cors';
-import * as bodyParser from 'body-parser';
+import { json } from 'body-parser';
 
 // import routes
 import { Routes } from './routes/index';
@@ -26,7 +26,7 @@ export class App {
     };
 
     this.expressApp.use(cors(this.corsOptions));
-    this.expressApp.use(bodyParser.json());
+    this.expressApp.use(json());
     this.expressApp.use(passportMiddleware.passport.initialize());
 
     this.expressApp.use('/api', this.routes.router);

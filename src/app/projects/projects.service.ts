@@ -1,6 +1,5 @@
 // import modules
 import { createWriteStream, WriteStream } from 'fs';
-// import * as fse from 'fs-extra';
 import { copy, remove } from 'fs-extra';
 import { resolve } from 'path';
 import * as archiver from 'archiver';
