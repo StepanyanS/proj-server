@@ -164,6 +164,13 @@ export class UsersService implements IRest {
   }
 
 
+  /**
+   * @description Edites User data
+   * @param {IUser} user
+   * @param {number} id
+   * @returns {(Promise<UserFromServer | IError>)}
+   * @memberof UsersService
+   */
   async editUser(user: IUser, id: number): Promise<UserFromServer | IError> {
     try {
       const userToEdit: UserEntity | false = await this.findById(id, true);
@@ -194,6 +201,13 @@ export class UsersService implements IRest {
     }
   }
 
+  
+  /**
+   * @description Removes User data from DB
+   * @param {number} id
+   * @returns {(Promise<IError | boolean>)}
+   * @memberof UsersService
+   */
   async deleteUser(id: number): Promise<IError | boolean> {
     return this.db.connect().then(async (connection) => {
       if(!connection) {
