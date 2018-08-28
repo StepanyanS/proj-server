@@ -29,7 +29,7 @@ export class PassportMiddleWare {
     };
     
     this.passport.use(new Strategy(options, async (jwt_payload, done) => {
-      
+
       try {
         const result = await usersService.findById(jwt_payload.id);
         if(!result) return done(false, false);

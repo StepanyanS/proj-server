@@ -25,53 +25,91 @@ export class UsersController {
   ) {}
 
 
+  /**
+   * @description Request handler for POST
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof UsersController
+   */
   async addUser(req: Request, res: Response): Promise<void> {
-    this.usersService.addUser(req.body)
-    .then((result: IError | boolean) => {
-      if (!result) res.status(502).send(result);
+    try {
+      const result: IError | boolean = await this.usersService.addUser(req.body);
+      if(!result) res.status(502).send(result);
       else if(typeof result !== 'boolean') {
         res.status(result.statusCode).send(result);
       }
       else {
         res.status(201).send(true);
       }
-    })
-    .catch(error => res.status(502).send({
-      type: 'Bad Gateway',
-      statusCode: 502,
-      message: 'Something went wrong'
-    }));
+    }
+    catch(err) {
+      res.status(502).send({
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Something went wrong'
+      });
+    }
   }
 
 
+  /**
+   * @description Request handler for GET
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof UsersController
+   */
   async getUser(req: Request, res: Response): Promise<void> {
-    this.usersService.getUser(req.user)
-    .then((result: IError | User): void => {
+    try {
+      const result: IError | User = await this.usersService.getUser(req.user);
       if(result instanceof User) {
         res.status(201).send(result)
       }
       else {
         res.status(result.statusCode).send(result.message);
       }
-    })
-    .catch(error => res.status(502).send({
-      type: 'Bad Gateway',
-      statusCode: 502,
-      message: 'Something went wrong'
-    }));
+    }
+    catch(err) {
+      res.status(502).send({
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Something went wrong'
+      });
+    }
   }
 
 
+  /**
+   * @description Request handler for PUT
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof UsersController
+   */
   async editUser(req: Request, res: Response): Promise<void> {
-    this.usersService.editUser(req.body, req.user)
-    .then((result: User | IError) => {
+    try {
+      const result = await this.usersService.editUser(req.body, req.user);
       if(result instanceof User) res.status(201).send(result);
-      else res.status(result.statusCode).send(result.message);
-    })
-    .catch(error => res.status(502).send('Something went wrong'));
+      else res.status(result.statusCode).send(result);
+    }
+    catch(err) {
+      res.status(502).send({
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Something went wrong'
+      });
+    }
   }
 
   
+  /**
+   * @description Request handler for DELETE
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof UsersController
+   */
   async deleteUser(req: Request, res: Response): Promise<void> {
     try {
       const result: boolean | IError = await this.usersService.deleteUser(req.body);
@@ -92,23 +130,32 @@ export class UsersController {
   }
 
 
+  /**
+   * @description Request handler for Login
+   * @param {Request} req
+   * @param {Response} res
+   * @returns {Promise<void>}
+   * @memberof UsersController
+   */
   async login(req: Request, res: Response): Promise<void> {
-    this.usersService.login(req.body)
-    .then((result: string | IError) => {
+    try {
+      const result = await this.usersService.login(req.body);
       if(typeof result !== 'string') {
-        res.status(result.statusCode).send(result.message);
+        res.status(result.statusCode).send(result);
       }
       else {
         res.status(201).send({
           token: result
         });
       }
-    })
-    .catch(error => res.status(502).send({
-      type: 'Bad Gateway',
-      statusCode: 502,
-      message: 'Something went wrong'
-    }));
+    }
+    catch(err) {
+      res.status(502).send({
+        type: 'Bad Gateway',
+        statusCode: 502,
+        message: 'Something went wrong'
+      });
+    }
   }
   
 }

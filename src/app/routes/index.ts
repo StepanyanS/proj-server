@@ -5,6 +5,9 @@ import { Routing } from './routing';
 import { UsersRouter } from './users-router';
 import { ProjectsRouter } from './projects-router';
 
+const usersrouter = new UsersRouter();
+const projectsRouter = new ProjectsRouter();
+
 export class Routes extends Routing {
 
   constructor() {
@@ -13,11 +16,8 @@ export class Routes extends Routing {
 
   route(): void {
 
-    const usersrouter = new UsersRouter();
-    const projectsRouter = new ProjectsRouter();
+    this.router.use('/users/', usersrouter.router);
 
-    this.router.get('/', () => {}).use('/users/', usersrouter.router);
-
-    this.router.get('/', () => {}).use('/projects/', projectsRouter.router);
+    this.router.use('/projects/', projectsRouter.router);
   }
 }
