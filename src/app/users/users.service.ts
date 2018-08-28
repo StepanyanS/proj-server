@@ -1,10 +1,12 @@
 // import modules
 import { Connection } from 'typeorm';
 import { hash, compare } from 'bcrypt';
+
+// import utils
 import { createToken } from '../utils/utils';
 
 // import models
-import { IUser } from '../models/user';
+import { IUser, User } from '../models/user';
 import { IError } from './../models/error.d';
 import { IRest } from '../models/rest';
 
@@ -14,12 +16,7 @@ import { Database } from '../db/db';
 // import entities
 import { UserEntity } from '../entities/user.entity';
 
-export abstract class User {
-  email: string;
-  name: string;
-}
-
-class UserWeb extends User {
+export class UserFromServer extends User {
 
   constructor(email: string, name: string) {
     super();
@@ -35,7 +32,7 @@ class UserWeb extends User {
  * @class UsersService
  * @implements {IRest}
  */
-export class UsersService {
+export class UsersService implements IRest {
 
   /**
    * @description Creates an instance of UsersService.
@@ -128,8 +125,8 @@ export class UsersService {
    * @returns {(Promise<IError | UserWeb | boolean>)}
    * @memberof UsersService
    */
-  async getUser(id: number): Promise<IError | UserWeb> {
-    return this.db.connect().then(async (connection: Connection): Promise<IError | UserWeb> => {
+  async getUser(id: number): Promise<IError | UserFromServer> {
+    return this.db.connect().then(async (connection: Connection): Promise<IError | UserFromServer> => {
       if(connection) {
         const result: UserEntity = await connection.getRepository(UserEntity).findOne({id: id});
         if(!result) {
@@ -143,7 +140,7 @@ export class UsersService {
           return error;
         }
 
-        const userData: UserWeb = new UserWeb(result.email, result.name);
+        const userData: UserFromServer = new UserFromServer(result.email, result.name);
 
         await connection.close();
         console.log('DB connection is closed');
@@ -167,7 +164,7 @@ export class UsersService {
   }
 
 
-  async editUser(user: IUser, id: number): Promise<UserWeb | IError> {
+  async editUser(user: IUser, id: number): Promise<UserFromServer | IError> {
     try {
       const userToEdit: UserEntity | false = await this.findById(id, true);
       if(!userToEdit) {
@@ -183,7 +180,7 @@ export class UsersService {
       const passwordHash = await hash(user.newPassword, saltRounds);
       await this.db.connection.getRepository(UserEntity).update(id, { password: passwordHash, name: user.name});
       await this.db.close();
-      const editedUser: UserWeb = new UserWeb(user.email, user.name);
+      const editedUser: UserFromServer = new UserFromServer(user.email, user.name);
       return editedUser;
     }
     catch(err) {
@@ -197,7 +194,7 @@ export class UsersService {
     }
   }
 
-  async deleteUser(param): Promise<IError | boolean> {
+  async deleteUser(id: number): Promise<IError | boolean> {
     return this.db.connect().then(async (connection) => {
       if(!connection) {
         const error: IError = {
@@ -208,7 +205,7 @@ export class UsersService {
         return error;
       }
       try {
-        await connection.getRepository(UserEntity).delete({email: param.user.email});
+        await connection.getRepository(UserEntity).delete({id: id});
         await connection.close();
         console.log('DB connection is closed');
         return true;
@@ -230,7 +227,6 @@ export class UsersService {
       return error;
     });
   }
-
 
 
   /**

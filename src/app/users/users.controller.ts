@@ -2,10 +2,10 @@
 import { Request, Response } from 'express';
 
 // import providers
-import { UsersService, User } from "./users.service";
+import { UsersService } from "./users.service";
 
 // import models
-import { IUser,  } from './../models/user.d';
+import { User } from './../models/user.d';
 import { IError } from './../models/error.d';
 
 /**
@@ -112,7 +112,7 @@ export class UsersController {
    */
   async deleteUser(req: Request, res: Response): Promise<void> {
     try {
-      const result: boolean | IError = await this.usersService.deleteUser(req.body);
+      const result: boolean | IError = await this.usersService.deleteUser(req.user);
       if(typeof result === 'boolean') {
         res.status(201).send(result);
       }

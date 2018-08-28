@@ -5,3 +5,8 @@ export interface IUser {
   id?: number;
   newPassword?: string
 }
+
+export abstract class User {
+  email: string;
+  name: string;
+}
