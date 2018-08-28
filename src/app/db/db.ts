@@ -12,13 +12,6 @@ import { IDB } from '../models/db';
 export class Database implements IDB {
 
   connection: Connection;
-
-  /**
-   * @description Creates an instance of Datebase.
-   * @memberof Datebase
-   */
-  constructor() {}
-
   
   /**
    * @description Creates a connection to database
