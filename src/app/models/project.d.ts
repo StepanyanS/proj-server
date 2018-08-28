@@ -1,3 +1,4 @@
+// import models
 import { Color } from './color.d';
 
 export interface IProject {

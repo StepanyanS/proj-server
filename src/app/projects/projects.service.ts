@@ -5,8 +5,12 @@ import { resolve } from 'path';
 import * as archiver from 'archiver';
 import { Connection } from 'typeorm';
 
+// import DB
 import { Database } from '../db/db';
+
+// import entities
 import { ProjectEntity } from './../entities/project.entity';
+
 import { GenerateVariables } from './generate-variables';
 
 // import models

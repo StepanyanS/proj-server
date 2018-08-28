@@ -2,8 +2,10 @@
 import { use, PassportStatic } from 'passport';
 import { ExtractJwt, Strategy, StrategyOptions } from 'passport-jwt';
 
-// import providers
+// import DB
 import { Database } from '../db/db';
+
+// import providers
 import { UsersService } from './../users/users.service';
 
 const db = new Database();

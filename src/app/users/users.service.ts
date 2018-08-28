@@ -10,7 +10,7 @@ import { IUser, User } from '../models/user';
 import { IError } from './../models/error.d';
 import { IRest } from '../models/rest';
 
-// import db
+// import DB
 import { Database } from '../db/db';
 
 // import entities

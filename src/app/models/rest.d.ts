@@ -1,3 +1,4 @@
+// import models
 import { IUser } from './user';
 import { IError } from './error';
 import { UserFromServer } from '../users/users.service';

@@ -1,3 +1,6 @@
+//import DB
+import { Database } from '../db/db';
+
 // import constroller
 import { ProjectsController } from './projects.controller';
 
@@ -5,7 +8,6 @@ import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
 
 import { GenerateVariables } from './generate-variables';
-import { Database } from '../db/db';
 
 const generateVariables = new GenerateVariables();
 const db = new Database();
