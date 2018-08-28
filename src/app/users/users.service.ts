@@ -1,7 +1,7 @@
 // import modules
 import { Connection } from 'typeorm';
 import { hash, compare } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import { createToken } from '../utils/utils';
 
 // import models
 import { IUser } from '../models/user';
@@ -13,10 +13,6 @@ import { Database } from '../db/db';
 
 // import entities
 import { UserEntity } from '../entities/user.entity';
-
-interface JwtPayload {
-  id: number;
-}
 
 export abstract class User {
   email: string;
@@ -50,13 +46,6 @@ export class UsersService {
   constructor(
     private db: Database
   ) {}
-
-  
-  private createToken(id: number): string {
-    const expiresIn = 3600;
-    const user: JwtPayload = { id: id };
-    return sign(user, 'secretKey', { expiresIn: expiresIn});
-  }
 
 
   /**
@@ -278,7 +267,7 @@ export class UsersService {
               return error;
             }
 
-            const token = this.createToken(userFound.id);
+            const token = createToken(userFound.id);
             await connection.close();
             console.log('DB connection is closed');
             return token;
