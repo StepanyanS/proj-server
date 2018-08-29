@@ -1,12 +1,11 @@
 // import modules
 import { createWriteStream, WriteStream } from 'fs';
-import { copy, remove } from 'fs-extra';
+import { copy as fseCopy, remove as fseRemove } from 'fs-extra';
 import { resolve } from 'path';
-import * as archiver from 'archiver';
+import { Archiver, create as createArchive } from 'archiver';
 import { Connection } from 'typeorm';
 
-// import DB
-import { Database } from '../db/db';
+import { Database } from "../db/database";
 
 // import entities
 import { ProjectEntity } from './../entities/project.entity';
@@ -71,7 +70,7 @@ export class ProjectsService {
    */
   private async copyProject(id: number, projectName: string): Promise<void> {
     try {
-      await copy(mainProjectDir, this.getNewProjectDir(id, projectName));
+      await fseCopy(mainProjectDir, this.getNewProjectDir(id, projectName));
       console.log('Copied!');
     } catch (err) {
       console.error(err);
@@ -112,7 +111,7 @@ export class ProjectsService {
         zlib: { level: 9 }
       }
   
-      const archive = archiver('zip', archiverOptions);
+      const archive: Archiver = createArchive('zip', archiverOptions);
       const output: WriteStream = createWriteStream(`${newProjectDir}/${id}/${projectName}.zip`);
       const project: string = this.getNewProjectDir(id, projectName);
   
@@ -134,7 +133,7 @@ export class ProjectsService {
   
       output.on('close', async () => {
         try {
-          await remove(this.getNewProjectDir(id, projectName));
+          await fseRemove(this.getNewProjectDir(id, projectName));
           resolve(true);
         }
         catch(err) {

@@ -1,44 +1,30 @@
-// import abstract classes
 import { Routing } from './routing';
 
-// import middlewares
 import { passportMiddleware } from '../middleware/passport';
+import { UsersController } from './../users/users.controller';
 
-// import constrollers
-import { usersController } from './../users/index';
-
-/**
- * @description Users router instance
- * @export
- * @class UsersRouter
- * @extends {Routing}
- */
 export class UsersRouter extends Routing {
+  usersController: UsersController;
 
-  /**
-   * @description Creates an instance of UsersRouter
-   * @memberof UsersRouter
-   */
   constructor () {
     super();
   }
 
+  init(): void {
+    this.usersController = new UsersController();
+  }
 
-  /**
-   * @description Adds 'users' routes and controllers
-   * @memberof UsersRouter
-   */
   route(): void {
 
-    this.router.post('/',      usersController.addUser.bind(usersController));                                                                         // Create
+    this.router.post('/',         this.usersController.addUser.bind(this.usersController));    // Create
 
-    this.router.get('/',       passportMiddleware.passport.authenticate('jwt', { session: false }), usersController.getUser.bind(usersController));    // Read
+    this.router.get('/',          this.usersController.getUser.bind(this.usersController));    // Read
 
-    this.router.put('/',       passportMiddleware.passport.authenticate('jwt', { session: false }), usersController.editUser.bind(usersController));   // Update
+    // this.router.put('/',       passportMiddleware.passport.authenticate('jwt', { session: false }), usersController.editUser.bind(usersController));   // Update
 
-    this.router.delete('/',    passportMiddleware.passport.authenticate('jwt', { session: false }), usersController.deleteUser.bind(usersController)); // Delete
+    // this.router.delete('/',    passportMiddleware.passport.authenticate('jwt', { session: false }), usersController.deleteUser.bind(usersController)); // Delete
 
-    this.router.post('/login', usersController.login.bind(usersController));                                                                           // Login
+    // this.router.post('/login', usersController.login.bind(usersController));                                                                           // Login
     
   }
 }
