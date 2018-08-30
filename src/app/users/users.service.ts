@@ -6,7 +6,7 @@ import { createToken } from '../utils/utils';
 
 import { IError } from './../models/error.d';
 
-import { BaseService } from './base-service';
+import { BaseService } from '../shared/base.service';
 import { IUser } from '../models/user.d';
 
 export class UsersService extends BaseService<IUser> {
