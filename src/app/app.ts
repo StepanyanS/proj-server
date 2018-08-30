@@ -1,17 +1,14 @@
 import * as express from 'express';
 import * as cors from 'cors';
 import { json } from 'body-parser';
-
 import { Routes } from './routes/index';
-
 import { Database } from "./db/database";
-
 import { PassportMiddleWare } from './middleware/passport';
 
 export class App {
-  routes: Routes;
-  expressApp: express.Express;
-  corsOptions: cors.CorsOptions;
+  private routes: Routes;
+  private expressApp: express.Express;
+  private corsOptions: cors.CorsOptions;
 
   constructor() {}
 
