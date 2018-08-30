@@ -1,4 +1,3 @@
-// import modules
 import { createWriteStream, WriteStream } from 'fs';
 import { copy as fseCopy, remove as fseRemove } from 'fs-extra';
 import { resolve } from 'path';
@@ -7,67 +6,29 @@ import { Connection } from 'typeorm';
 
 import { Database } from "../db/database";
 
-// import entities
 import { ProjectEntity } from './../entities/project.entity';
 
 import { GenerateVariables } from './generate-variables';
 
-// import models
 import { IProject } from '../models/project';
 
-// import configs
 import { mainProjectDir, newProjectDir } from './projects.config';
 
-/**
- * @description Projects Controller Provider instance
- * @export
- * @class ProjectsService
- */
 export class ProjectsService {
   
-  /**
-   * @description Creates an instance of ProjectsService
-   * @param {GenerateVariables} generateVariables
-   * @memberof ProjectsService
-   */
   constructor(
     private db: Database,
     private generateVariables: GenerateVariables
   ) {}
   
-  
-  /**
-   * @description Gets new project direction
-   * @private
-   * @param {string} name
-   * @returns {string}
-   * @memberof ProjectsService
-   */
   private getNewProjectDir(id: number, name: string): string {
     return resolve(__dirname, newProjectDir, id.toString(), name);
   }
 
-
-  /**
-   * @description Gets variables file path by schematic
-   * @private
-   * @param {string} projectName
-   * @param {*} SassFile
-   * @returns {string}
-   * @memberof ProjectsService
-   */
   private getVariablesFilePath(id: number, projectName: string, SassFile): string {
     return resolve(__dirname, `../../assets/deliver/${id}/${projectName}/src/assets/scss/utilities/_${SassFile}.scss`);
   }
 
-  
-  /**
-   * @description Copies main project for delivery
-   * @private
-   * @param {string} projectName
-   * @returns {Promise<void>}
-   * @memberof ProjectsService
-   */
   private async copyProject(id: number, projectName: string): Promise<void> {
     try {
       await fseCopy(mainProjectDir, this.getNewProjectDir(id, projectName));
@@ -77,15 +38,6 @@ export class ProjectsService {
     }
   }
 
-  
-  /**
-   * @description Writes variables data in specified file
-   * @private
-   * @param {string} variablesFile
-   * @param {string} data
-   * @returns {Promise<void>}
-   * @memberof ProjectsService
-   */
   private async writeVariablesData(variablesFile: string, data: string): Promise<void> {
     try {
       const wrStream: WriteStream = createWriteStream(variablesFile);
@@ -97,14 +49,6 @@ export class ProjectsService {
     }
   }
 
-
-  /**
-   * @description Makes project .zip
-   * @private
-   * @param {string} projectName
-   * @returns {Promise<boolean>}
-   * @memberof ProjectsService
-   */
   private makeZip(id: number, projectName: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
       const archiverOptions = {
@@ -144,13 +88,6 @@ export class ProjectsService {
     })
   }
 
-  
-  /**
-   * @description Creates project for download
-   * @param {IProject} project
-   * @returns {Promise<boolean>}
-   * @memberof ProjectsService
-   */
   async createProject(project: IProject, userId: number): Promise<boolean> {
 
     const colorsSources = {

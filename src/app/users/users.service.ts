@@ -30,4 +30,26 @@ export class UsersService extends BaseService<IUser> {
   async getUser(id: number) {
     return await this.getById(id);
   }
+
+  async editUser(id: number, user: IUser) {
+    try {
+      user.password = await passwordHash(user.password, 10);
+      return await this.editItem(id, user);
+    }
+    catch(err) {
+      console.log(err);
+      return false;
+    }
+  }
+
+  async removeUser(id: number): Promise<boolean> {
+    try {
+      await this.removeItem(id);
+      return true;
+    }
+    catch(err) {
+      console.log(err);
+      return false;
+    }
+  }
 }

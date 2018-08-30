@@ -28,5 +28,13 @@ export class UsersController {
       res.status(502).send('Bad Gateway');
     }
   }
+
+  async editUser(req: Request, res: Response): Promise<void> {
+    const result = await this.usersService.editUser(req.user, req.body);
+    if(result) res.status(201).send(result);
+    else {
+      res.status(502).send(result);
+    }
+  }
   
 }
