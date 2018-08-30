@@ -6,7 +6,7 @@ import { Routes } from './routes/index';
 
 import { Database } from "./db/database";
 
-// import { passportMiddleware } from './middleware/passport';
+import { PassportMiddleWare } from './middleware/passport';
 
 export class App {
   routes: Routes;
@@ -25,10 +25,11 @@ export class App {
 
     this.expressApp.use(cors(this.corsOptions));
     this.expressApp.use(json());
-    // this.expressApp.use(passportMiddleware.passport.initialize());
 
     try {
       await Database.connect();
+      PassportMiddleWare.useStrategy();
+      this.expressApp.use(PassportMiddleWare.passport.initialize());
       this.routes = new Routes();
       this.expressApp.use('/api', this.routes.router);
     }

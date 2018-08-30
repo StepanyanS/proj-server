@@ -17,12 +17,12 @@ export class UsersController {
     const result = await this.usersService.addUser(req.body);
     if(result) res.status(201).send(result);
     else {
-      res.status(502).send(result);
+      res.status(502).send('Bad Gateway');
     }
   }
 
   async getUser(req: Request, res: Response): Promise<void> {
-    const result = await this.usersService.getUser(5);
+    const result = await this.usersService.getUser(req.user);
     if(result) res.status(201).send(result);
     else {
       res.status(502).send('Bad Gateway');
@@ -33,8 +33,21 @@ export class UsersController {
     const result = await this.usersService.editUser(req.user, req.body);
     if(result) res.status(201).send(result);
     else {
-      res.status(502).send(result);
+      res.status(502).send('Bad Gateway');
     }
+  }
+
+  async removeUser(req: Request, res: Response): Promise<void> {
+    const result = await this.usersService.removeUser(req.user);
+    if(result) res.status(201).send(result);
+    else {
+      res.status(502).send('Bad Gateway');
+    }
+  }
+
+  async login(req: Request, res: Response): Promise<void> {
+    const result = await this.usersService.login(req.body);
+    res.status(201).send(result);
   }
   
 }

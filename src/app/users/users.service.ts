@@ -1,4 +1,4 @@
-import { Connection, EntitySchema } from 'typeorm';
+import { EntitySchema } from 'typeorm';
 
 import { hash as passwordHash, compare as passwordCompare } from 'bcrypt';
 
@@ -28,7 +28,12 @@ export class UsersService extends BaseService<IUser> {
   }
 
   async getUser(id: number) {
-    return await this.getById(id);
+    const user = await this.getById(id);
+    if(user) return {
+      email: user.email,
+      userName: user.userName
+    }
+    return false;
   }
 
   async editUser(id: number, user: IUser) {
@@ -51,5 +56,11 @@ export class UsersService extends BaseService<IUser> {
       console.log(err);
       return false;
     }
+  }
+
+  async login(user: IUser): Promise<boolean | string> {
+    const result = await this.repo.findOne({email: user.email});
+    if(result) return await createToken(result.id);
+    return false;
   }
 }

@@ -2,34 +2,26 @@ import { use, PassportStatic } from 'passport';
 import { ExtractJwt, Strategy, StrategyOptions } from 'passport-jwt';
 
 import { UsersService } from './../users/users.service';
-
-// const usersService = new UsersService();
+import { UserEntity } from '../entities/user.entity';
 
 export class PassportMiddleWare {
-  passport: PassportStatic;
-  strategyOptions: StrategyOptions;
+  public static passport: PassportStatic;
+  public static strategyOptions: StrategyOptions;
+  public static usersService: UsersService;
 
-  constructor() {
-    this.useStrategy();
-  }
+  constructor() {}
 
-  useStrategy(): void {
+  public static useStrategy(): void {
+    PassportMiddleWare.usersService = new UsersService(UserEntity);
     this.strategyOptions = {
       secretOrKey: 'secretKey',
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken()
     };
-    
-    // this.passport = use(new Strategy(this.strategyOptions, async (jwt_payload, done) => {
-    //   try {
-    //     const result = await usersService.findById(jwt_payload.id);
-    //     if(!result) return done(false, false);
-    //     return done(null, result.id);
-    //   }
-    //   catch(err) {
-    //     return done(err, false);
-    //   }
-    // }));
+
+    PassportMiddleWare.passport = use(new Strategy(this.strategyOptions, async (jwt_payload, done) => {
+      const result = await PassportMiddleWare.usersService.getUser(jwt_payload.id);
+      if(!result) return done(false, false);
+      return done(null, jwt_payload.id);
+    }));
   }
 }
-
-export const passportMiddleware = new PassportMiddleWare();
