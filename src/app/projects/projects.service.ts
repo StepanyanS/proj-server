@@ -2,7 +2,7 @@ import { createWriteStream, WriteStream } from 'fs';
 import { copy as fseCopy, remove as fseRemove } from 'fs-extra';
 import { resolve } from 'path';
 import { Archiver, create as createArchive } from 'archiver';
-import { Connection } from 'typeorm';
+import { Connection, EntitySchema } from 'typeorm';
 
 import { Database } from "../db/database";
 
@@ -13,13 +13,17 @@ import { GenerateVariables } from './generate-variables';
 import { IProject } from '../models/project';
 
 import { mainProjectDir, newProjectDir } from './projects.config';
+import { BaseService } from '../shared/base.service';
 
-export class ProjectsService {
+export class ProjectsService extends BaseService<IProject> {
+  generateVariables: GenerateVariables;
+  db: Database;
   
-  constructor(
-    private db: Database,
-    private generateVariables: GenerateVariables
-  ) {}
+  constructor(projectEntity: EntitySchema<IProject>) {
+    super(projectEntity);
+    this.generateVariables = new GenerateVariables();
+    this.db = Database;
+  }
   
   private getNewProjectDir(id: number, name: string): string {
     return resolve(__dirname, newProjectDir, id.toString(), name);

@@ -1,8 +1,7 @@
-// import models
-import { Color } from './color.d';
-
 export interface IProject {
-  name: string,
-  colors: Color[]
+  id: number;
+  userId: number;
+  projectName: string;
+  date: string;
+  data: string;
 }
-  

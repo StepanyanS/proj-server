@@ -1,37 +1,28 @@
-// import modules
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { EntitySchema } from 'typeorm';
+import { IProject } from '../models/project';
 
-/**
- * @description Entity instance for Project
- * @export
- * @class ProjectEntity
- */
-@Entity()
-export class ProjectEntity {
-
-  @PrimaryGeneratedColumn({
-    type: 'int'
-  })
-  id: number;
-
-  @Column({
-    type: 'int'
-  })
-  userId: number;
-
-  @Column({
-    type: 'varchar',
-    length: 255
-  })
-  name: string;
-
-  @Column({
-    type: 'varchar'
-  })
-  date: string;
-
-  @Column({
-    type: 'varchar'
-  })
-  data: string;
-}
+export const ProjectEntity = new EntitySchema<IProject>({
+  name: 'projects',
+  columns: {
+    id: {
+      type: Number,
+      primary: true,
+      generated: true
+    },
+    userId: {
+      type: Number
+    },
+    projectName: {
+      type: String,
+      length: 255
+    },
+    date: {
+      type: String,
+      length: 255
+    },
+    data: {
+      type: String,
+      length: 255
+    }
+  }
+});

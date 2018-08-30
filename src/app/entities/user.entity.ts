@@ -22,4 +22,4 @@ export const UserEntity = new EntitySchema<IUser>({
       length: 255
     }
   }
-})
+});
