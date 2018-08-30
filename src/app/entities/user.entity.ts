@@ -1,34 +1,25 @@
-// import modules
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { EntitySchema } from 'typeorm';
+import { IUser } from '../models/user.d';
 
-/**
- * @description Entity instance for User
- * @export
- * @class UserEntity
- */
-@Entity()
-export class UserEntity {
-
-  @PrimaryGeneratedColumn({
-    type: 'int'
-  })
-  id: number;
-
-  @Column({
-    type: 'varchar',
-    length: 255
-  })
-  email: string;
-
-  @Column({
-    type: 'varchar',
-    length: 255
-  })
-  password: string;
-
-  @Column({
-    type: 'varchar',
-    length: 255
-  })
-  name: string;
-}
+export const UserEntity = new EntitySchema<IUser>({
+  name: 'users',
+  columns: {
+    id: {
+      type: Number,
+      primary: true,
+      generated: true
+    },
+    email: {
+      type: String,
+      length: 255
+    },
+    password: {
+      type: String,
+      length: 255
+    },
+    userName: {
+      type: String,
+      length: 255
+    }
+  }
+})

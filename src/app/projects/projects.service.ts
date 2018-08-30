@@ -5,10 +5,7 @@ import { resolve } from 'path';
 import { Archiver, create as createArchive } from 'archiver';
 import { Connection } from 'typeorm';
 
-// console.log(Archiver);
-
-// import DB
-import { Database } from '../db/db';
+import { Database } from "../db/database";
 
 // import entities
 import { ProjectEntity } from './../entities/project.entity';

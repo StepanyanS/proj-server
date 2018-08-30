@@ -1,5 +1,5 @@
 //import DB
-import { Database } from '../db/db';
+import { Database } from "../db/database";
 
 // import constroller
 import { ProjectsController } from './projects.controller';
