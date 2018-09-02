@@ -83,7 +83,7 @@ export class ProjectsService extends BaseService<IProject> {
     })
   }
 
-  async createProject(project, userId: number): Promise<boolean> {
+  async createProject(project: IProject, userId: number): Promise<boolean> {
 
     const colorsSources = {
       primary: 'red',
@@ -91,7 +91,7 @@ export class ProjectsService extends BaseService<IProject> {
     };
 
     try {
-      project.userId = userId;
+      project.user = userId;
       project.date = new Date();
       await this.copyProject(userId, project.projectName);
       await this.writeVariablesData(this.getVariablesFilePath(userId, project.projectName, 'variables'), this.generateVariables.getColorsData(project.data.colors, colorsSources));

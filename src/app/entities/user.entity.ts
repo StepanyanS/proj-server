@@ -21,5 +21,11 @@ export const UserEntity = new EntitySchema<IUser>({
       type: String,
       length: 255
     }
+  },
+  relations: {
+    projects: {
+      type: 'one-to-many',
+      target: 'projects'
+    }
   }
 });

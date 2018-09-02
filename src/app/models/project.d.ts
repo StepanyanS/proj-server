@@ -5,13 +5,13 @@ export interface IColor {
 
 export interface IProjectData {
   colors: IColor[];
-  colorsSources: string;
+  colorsSources: Object;
 }
 
 export interface IProject {
   id: number;
-  userId: number;
+  user: number;
   projectName: string;
-  date: string;
+  date: Date;
   data: IProjectData;
 }

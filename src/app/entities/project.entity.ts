@@ -9,9 +9,6 @@ export const ProjectEntity = new EntitySchema<IProject>({
       primary: true,
       generated: true
     },
-    userId: {
-      type: Number
-    },
     projectName: {
       type: String,
       length: 255
@@ -21,6 +18,12 @@ export const ProjectEntity = new EntitySchema<IProject>({
     },
     data: {
       type: 'json'
+    }
+  },
+  relations: {
+    user: {
+      type: 'many-to-one',
+      target: 'users'
     }
   }
 });
