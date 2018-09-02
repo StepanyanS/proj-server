@@ -20,6 +20,8 @@ export class ProjectsRouter extends Routing {
 
     this.router.get('/',    PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.projectsController.getProjects.bind(this.projectsController));      // Read
 
+    this.router.delete('/:id',    PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.projectsController.removeProject.bind(this.projectsController));      // Delete
+
     this.router.get('/download', PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.projectsController.downloadProject.bind(this.projectsController));
   }
 }

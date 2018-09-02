@@ -27,7 +27,6 @@ export class ProjectsService extends BaseService<IProject> {
   private async copyProject(id: number, projectName: string): Promise<void> {
     try {
       await fseCopy(mainProjectDir, this.getNewProjectDir(id, projectName));
-      console.log('Copied!');
     } catch (err) {
       console.error(err);
     }
@@ -38,7 +37,6 @@ export class ProjectsService extends BaseService<IProject> {
       const wrStream: WriteStream = createWriteStream(variablesFile);
       await wrStream.write(data);
       wrStream.close();
-      console.log('Variables written!');
     } catch (err) {
       console.error(err);
     }
@@ -91,6 +89,8 @@ export class ProjectsService extends BaseService<IProject> {
     };
 
     try {
+      const existingProject = await this.getAll({user: userId, projectName: project.projectName});
+      if(existingProject && existingProject.length > 0) return false;
       project.user = userId;
       project.date = new Date();
       await this.copyProject(userId, project.projectName);
@@ -105,6 +105,10 @@ export class ProjectsService extends BaseService<IProject> {
     }
   }
 
+  getProject() {
+
+  }
+
   async getProjects(userId: number) {
     try {
       const projects = await this.getAll({user: userId});
@@ -117,6 +121,22 @@ export class ProjectsService extends BaseService<IProject> {
           }
         });
         return result;
+      }
+      return false;
+    }
+    catch(err) {
+      console.log(err);
+      return false;
+    }
+  }
+
+  async removeProject(userId: number, projectId: number): Promise<boolean> {
+    try {
+      const project = await this.getById(projectId);
+      if(project) {
+        await fseRemove(this.getNewProjectDir(userId, `${project.projectName}.zip`));
+        const result = await this.removeItem(projectId);
+        return result.raw.affectedRows ? true : false;
       }
       return false;
     }
