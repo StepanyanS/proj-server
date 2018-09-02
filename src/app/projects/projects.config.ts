@@ -1,4 +1,3 @@
-// import modules
 import { resolve } from 'path';
 
 export const mainProjectDir = resolve(__dirname, '../../assets/project');

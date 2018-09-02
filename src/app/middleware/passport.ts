@@ -1,6 +1,5 @@
 import { use, PassportStatic } from 'passport';
 import { ExtractJwt, Strategy, StrategyOptions } from 'passport-jwt';
-
 import { UsersService } from './../users/users.service';
 import { UserEntity } from '../entities/user.entity';
 

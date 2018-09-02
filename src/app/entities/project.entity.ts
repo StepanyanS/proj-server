@@ -23,7 +23,8 @@ export const ProjectEntity = new EntitySchema<IProject>({
   relations: {
     user: {
       type: 'many-to-one',
-      target: 'users'
+      target: 'users',
+      joinColumn: true
     }
   }
 });

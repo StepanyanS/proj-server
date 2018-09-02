@@ -1,12 +1,10 @@
 import { Database } from '../db/database';
-import { Repository, EntitySchema, DeepPartial, UpdateResult, DeleteResult } from 'typeorm';
+import { Repository, EntitySchema, DeepPartial, UpdateResult, DeleteResult, FindConditions } from 'typeorm';
 
 export abstract class BaseService<T> {
   repo: Repository<T>;
-  entity: EntitySchema<T>;
 
-  constructor(entity: EntitySchema<T>) {
-    this.entity = entity;
+  constructor(protected entity: EntitySchema<T>) {
     this.repo = Database.connection.getRepository(this.entity);
   }
 
@@ -24,5 +22,9 @@ export abstract class BaseService<T> {
 
   protected async removeItem(id: number): Promise<DeleteResult> {
     return await this.repo.delete(id);
+  }
+
+  protected async getAll(options: FindConditions<T>): Promise<T[]> {
+    return await this.repo.find(options);
   }
 }

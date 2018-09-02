@@ -1,4 +1,3 @@
-// import models
 import { Connection } from 'typeorm';
 
 export interface IDB {

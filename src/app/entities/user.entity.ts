@@ -25,7 +25,8 @@ export const UserEntity = new EntitySchema<IUser>({
   relations: {
     projects: {
       type: 'one-to-many',
-      target: 'projects'
+      target: 'projects',
+      inverseSide: 'user'
     }
   }
 });

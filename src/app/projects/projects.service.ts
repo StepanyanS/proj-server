@@ -104,4 +104,25 @@ export class ProjectsService extends BaseService<IProject> {
       return false;
     }
   }
+
+  async getProjects(userId: number) {
+    try {
+      const projects = await this.getAll({user: userId});
+      if(projects) {
+        const result = projects.map(project => {
+          return {
+            id: project.id,
+            name: project.projectName,
+            date: project.date
+          }
+        });
+        return result;
+      }
+      return false;
+    }
+    catch(err) {
+      console.log(err);
+      return false;
+    }
+  }
 }

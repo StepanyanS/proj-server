@@ -24,4 +24,12 @@ export class ProjectsController {
     console.log('Downloaded');
   }
 
+  async getProjects(req: Request, res: Response): Promise<void> {
+    const result = await this.projectsService.getProjects(req.user);
+    if(result) res.status(201).send(result);
+    else {
+      res.status(502).send('Bad Gateway');
+    }
+  }
+
 }
