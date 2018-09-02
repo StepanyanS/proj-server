@@ -17,12 +17,10 @@ export const ProjectEntity = new EntitySchema<IProject>({
       length: 255
     },
     date: {
-      type: String,
-      length: 255
+      type: Date
     },
     data: {
-      type: String,
-      length: 255
+      type: 'json'
     }
   }
 });

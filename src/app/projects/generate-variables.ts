@@ -1,21 +1,8 @@
-// import models
-import { Color } from "../models/color";
+import { IColor } from '../models/project.d';
 
-/**
- * @description GenerateVariables instance
- * @export
- * @class GenerateVariables
- */
 export class GenerateVariables {
 
-  /**
-   * @description gets Colors data for writing
-   * @param {Object} colors
-   * @param {Object} colorsSources
-   * @returns {string}
-   * @memberof GenerateVariables
-   */
-  public getColorsData(colors: Color[], colorsSources: Object): string {
+  public getColorsData(colors: IColor[], colorsSources: Object): string {
     let colorsVariablesData = '// colors\n';
     let colorsSourcesData = '// Color themes\n';
 
@@ -32,15 +19,7 @@ export class GenerateVariables {
     return colorsVariablesData + colorsSourcesData;
   }
 
-  
-  /**
-   * @description gets generated variables data
-   * @param {Object} colors
-   * @param {Object} colorsSources
-   * @returns {string}
-   * @memberof GenerateVariables
-   */
-  public getGeneratedData(colors: Color[], colorsSources: Object): string {
+  public getGeneratedData(colors: IColor[], colorsSources: Object): string {
     return this.getColorsData(colors, colorsSources);
   } 
 }

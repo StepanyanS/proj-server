@@ -1,28 +1,19 @@
 import { createWriteStream, WriteStream } from 'fs';
 import { copy as fseCopy, remove as fseRemove } from 'fs-extra';
 import { resolve } from 'path';
-import { Archiver, create as createArchive } from 'archiver';
-import { Connection, EntitySchema } from 'typeorm';
-
-import { Database } from "../db/database";
-
-import { ProjectEntity } from './../entities/project.entity';
-
+import { Archiver, create as createArchive, ArchiverOptions } from 'archiver';
+import { EntitySchema } from 'typeorm';
 import { GenerateVariables } from './generate-variables';
-
 import { IProject } from '../models/project';
-
 import { mainProjectDir, newProjectDir } from './projects.config';
 import { BaseService } from '../shared/base.service';
 
 export class ProjectsService extends BaseService<IProject> {
   generateVariables: GenerateVariables;
-  db: Database;
   
   constructor(projectEntity: EntitySchema<IProject>) {
     super(projectEntity);
     this.generateVariables = new GenerateVariables();
-    this.db = Database;
   }
   
   private getNewProjectDir(id: number, name: string): string {
@@ -55,7 +46,7 @@ export class ProjectsService extends BaseService<IProject> {
 
   private makeZip(id: number, projectName: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      const archiverOptions = {
+      const archiverOptions: ArchiverOptions = {
         zlib: { level: 9 }
       }
   
@@ -92,7 +83,7 @@ export class ProjectsService extends BaseService<IProject> {
     })
   }
 
-  async createProject(project: IProject, userId: number): Promise<boolean> {
+  async createProject(project, userId: number): Promise<boolean> {
 
     const colorsSources = {
       primary: 'red',
@@ -100,25 +91,17 @@ export class ProjectsService extends BaseService<IProject> {
     };
 
     try {
-      await this.copyProject(userId, project.name);
-      await this.writeVariablesData(this.getVariablesFilePath(userId, project.name, 'variables'), this.generateVariables.getColorsData(project.colors, colorsSources));
-      return this.makeZip(userId, project.name)
-      .then(res => {
-        this.db.connect().then(async (connection: Connection) => {
-          const projectEntity: ProjectEntity = new ProjectEntity();
-          projectEntity.userId = userId;
-          projectEntity.name = project.name;
-          projectEntity.date = '';
-          projectEntity.data = '';
-          await connection.getRepository(ProjectEntity).save(projectEntity);
-          await connection.close();
-          console.log('DB connection is closed');
-        });
-        return res;
-      })
-      .catch(error => error);
-    } catch(error) {
-      console.log(error);
+      project.userId = userId;
+      project.date = new Date();
+      await this.copyProject(userId, project.projectName);
+      await this.writeVariablesData(this.getVariablesFilePath(userId, project.projectName, 'variables'), this.generateVariables.getColorsData(project.data.colors, colorsSources));
+      await this.makeZip(userId, project.projectName);
+      const res = await this.addItem(project);
+      return res ? true : false;
+    }
+    catch(err) {
+      console.log(err);
+      return false;
     }
   }
 }

@@ -10,13 +10,15 @@ export class ProjectsController {
     this.projectsService = new ProjectsService(ProjectEntity);
   }
 
-  public createProject(req: Request, res: Response): void {
-    this.projectsService.createProject(req.body, req.user).then((isCreated) => {
-      res.status(201).send(isCreated);
-    });
+  public async createProject(req: Request, res: Response): Promise<void> {
+    const result = await this.projectsService.createProject(req.body, req.user);
+    if(result) res.status(201).send(result);
+    else {
+      res.status(502).send('Bad Gateway');
+    }
   }
 
-  public downloadProject(req: Request, res: Response) {
+  public async downloadProject(req: Request, res: Response) {
     const file = `${newProjectDir}/${req.user}/${req.query.projectName}.zip`;
     res.download(file);
     console.log('Downloaded');

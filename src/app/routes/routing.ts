@@ -9,7 +9,7 @@ export abstract class Routing {
     this.route();
   }
 
-  abstract route(): void;
+  protected abstract route(): void;
 
-  abstract init(): void;
+  protected abstract init(): void;
 }

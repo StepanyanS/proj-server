@@ -1,37 +1,23 @@
-// import absract classes
 import { Routing } from './routing';
+import { PassportMiddleWare } from '../middleware/passport';
+import { ProjectsController } from './../projects/projects.controller';
 
-// import middlewares
-import { passportMiddleware } from '../middleware/passport';
-
-// import controllers
-import { projectsController } from './../projects/index';
-
-/**
- * @description Projects router instance
- * @export
- * @class ProjectsRouter
- * @extends {Routing}
- */
 export class ProjectsRouter extends Routing {
+  projectsController: ProjectsController;
   
-  /**
-   * @description Creates an instance of ProjectsRouter
-   * @memberof ProjectsRouter
-   */
   constructor() {
     super();
   }
 
+  init() {
+    this.projectsController = new ProjectsController();
+  }
+
   
-  /**
-   * @description Adds 'projects' routes and controllers
-   * @memberof ProjectsRouter
-   */
   route(): void {
 
-    this.router.post('/create',  passportMiddleware.passport.authenticate('jwt', { session: false }), projectsController.createProject.bind(projectsController));     // Create
+    this.router.post('/create',  PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.projectsController.createProject.bind(this.projectsController));     // Create
 
-    this.router.get('/download', passportMiddleware.passport.authenticate('jwt', { session: false }), projectsController.downloadProject.bind(projectsController));   // Read
+    this.router.get('/download', PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.projectsController.downloadProject.bind(this.projectsController));   // Read
   }
 }
