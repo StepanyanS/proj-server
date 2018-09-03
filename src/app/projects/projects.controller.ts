@@ -22,10 +22,9 @@ export class ProjectsController extends BaseController<ProjectsService> {
     await this.handle(this.service.removeProject(req.user, req.params.id), res);
   }
 
-  public async downloadProject(req: Request, res: Response) {
+  public async downloadProject(req: Request, res: Response): Promise<void> {
     const file = `${newProjectDir}/${req.user}/${req.query.projectName}.zip`;
     res.download(file);
-    console.log('Downloaded');
   }
 
 }

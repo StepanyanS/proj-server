@@ -1,5 +1,5 @@
 import { createWriteStream, WriteStream } from 'fs';
-import { copy as fseCopy, remove as fseRemove } from 'fs-extra';
+import { copy as fseCopy } from 'fs-extra';
 import { resolve } from 'path';
 import { Archiver, create as createArchive, ArchiverOptions } from 'archiver';
 import { EntitySchema } from 'typeorm';

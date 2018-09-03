@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { BaseController } from '../shared/base.controller';
-import { UsersService } from "./users.service";
-import { UserEntity } from "../entities/user.entity";
+import { UsersService } from './users.service';
+import { UserEntity } from '../entities/user.entity';
 
 export class UsersController extends BaseController<UsersService> {
 
