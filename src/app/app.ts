@@ -32,7 +32,7 @@ export class App {
     }
     catch(err) {
       this.expressApp.use('*', (req, res) => {
-        res.status(502).send('Bad Gateway');
+        res.status(404).send('Not Found');
       });
     }
 

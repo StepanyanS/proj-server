@@ -7,6 +7,8 @@ import { GenerateVariables } from './generate-variables';
 import { IProject } from '../models/project';
 import { mainProjectDir, newProjectDir } from './projects.config';
 import { BaseService } from '../shared/base.service';
+import { IResult } from './../models/result.d';
+import { remove } from '../utils/utils';
 
 export class ProjectsService extends BaseService<IProject> {
   generateVariables: GenerateVariables;
@@ -70,7 +72,7 @@ export class ProjectsService extends BaseService<IProject> {
   
       output.on('close', async () => {
         try {
-          await fseRemove(this.getNewProjectDir(id, projectName));
+          await remove(id, projectName);
           resolve(true);
         }
         catch(err) {
@@ -81,7 +83,7 @@ export class ProjectsService extends BaseService<IProject> {
     })
   }
 
-  async createProject(project: IProject, userId: number): Promise<boolean> {
+  async createProject(project: IProject, userId: number): Promise<IResult> {
 
     const colorsSources = {
       primary: 'red',
@@ -90,18 +92,51 @@ export class ProjectsService extends BaseService<IProject> {
 
     try {
       const existingProject = await this.getAll({user: userId, projectName: project.projectName});
-      if(existingProject && existingProject.length > 0) return false;
+      if(existingProject && existingProject.length > 0) {
+        return {
+          statusCode: 422,
+          body: {
+            status: false,
+            message: 'Project with this name is already exists',
+            data: null
+          }
+        };
+      }
       project.user = userId;
       project.date = new Date();
       await this.copyProject(userId, project.projectName);
       await this.writeVariablesData(this.getVariablesFilePath(userId, project.projectName, 'variables'), this.generateVariables.getColorsData(project.data.colors, colorsSources));
       await this.makeZip(userId, project.projectName);
       const res = await this.addItem(project);
-      return res ? true : false;
+      if(res) {
+        return {
+          statusCode: 201,
+          body: {
+            status: true,
+            message: 'Project has been successfully created',
+            data: null
+          }
+        };
+      }
+      return {
+        statusCode: 502,
+        body: {
+          status: false,
+          message: 'Something went wrong',
+          data: null
+        }
+      };
     }
     catch(err) {
       console.log(err);
-      return false;
+      return {
+        statusCode: 502,
+        body: {
+          status: false,
+          message: 'Something went wrong',
+          data: null
+        }
+      };
     }
   }
 
@@ -109,7 +144,7 @@ export class ProjectsService extends BaseService<IProject> {
 
   }
 
-  async getProjects(userId: number) {
+  async getProjects(userId: number): Promise<IResult> {
     try {
       const projects = await this.getAll({user: userId});
       if(projects) {
@@ -120,29 +155,73 @@ export class ProjectsService extends BaseService<IProject> {
             date: project.date
           }
         });
-        return result;
+        return {
+          statusCode: 200,
+          body: {
+            status: true,
+            message: '',
+            data: result
+          }
+        };
       }
-      return false;
+      return {
+        statusCode: 200,
+        body: {
+          status: true,
+          message: '',
+          data: null
+        }
+      };
     }
     catch(err) {
       console.log(err);
-      return false;
+      return {
+        statusCode: 200,
+        body: {
+          status: false,
+          message: 'Something went wrong',
+          data: null
+        }
+      };
     }
   }
 
-  async removeProject(userId: number, projectId: number): Promise<boolean> {
+  async removeProject(userId: number, projectId: number): Promise<IResult> {
     try {
       const project = await this.getById(projectId);
       if(project) {
-        await fseRemove(this.getNewProjectDir(userId, `${project.projectName}.zip`));
+        await remove(userId, `${project.projectName}.zip`);
         const result = await this.removeItem(projectId);
-        return result.raw.affectedRows ? true : false;
+        if(result.raw.affectedRows) {
+          return {
+            statusCode: 202,
+            body: {
+              status: true,
+              message: 'Project has been removed',
+              data: null
+            }
+          }
+        }
       }
-      return false;
+      return {
+        statusCode: 404,
+        body: {
+          status: false,
+          message: 'Project does not exist',
+          data: null
+        }
+      }
     }
     catch(err) {
       console.log(err);
-      return false;
+      return {
+        statusCode: 502,
+        body: {
+          status: false,
+          message: 'Something went wrong',
+          data: null
+        }
+      }
     }
   }
 }

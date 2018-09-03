@@ -2,36 +2,24 @@ import { Request, Response } from 'express';
 import { ProjectsService } from './projects.service';
 import { newProjectDir } from './projects.config';
 import { ProjectEntity } from '../entities/project.entity';
+import { BaseController } from '../shared/base.controller';
 
-export class ProjectsController {
-  projectsService: ProjectsService;
+export class ProjectsController extends BaseController<ProjectsService> {
 
   constructor () {
-    this.projectsService = new ProjectsService(ProjectEntity);
+    super(new ProjectsService(ProjectEntity));
   }
 
   public async createProject(req: Request, res: Response): Promise<void> {
-    const result = await this.projectsService.createProject(req.body, req.user);
-    if(result) res.status(201).send(result);
-    else {
-      res.status(502).send('Bad Gateway');
-    }
+    await this.handle(this.service.createProject(req.body, req.user), res);
   }
 
-  async getProjects(req: Request, res: Response): Promise<void> {
-    const result = await this.projectsService.getProjects(req.user);
-    if(result) res.status(200).send(result);
-    else {
-      res.status(502).send('Bad Gateway');
-    }
+  public async getProjects(req: Request, res: Response): Promise<void> {
+    await this.handle(this.service.getProjects(req.user), res);
   }
 
-  async removeProject(req: Request, res: Response): Promise<void> {
-    const result = await this.projectsService.removeProject(req.user, req.params.id);
-    if(result) res.status(200).send(result);
-    else {
-      res.status(502).send('Bad Gateway');
-    }
+  public async removeProject(req: Request, res: Response): Promise<void> {
+    await this.handle(this.service.removeProject(req.user, req.params.id), res);
   }
 
   public async downloadProject(req: Request, res: Response) {
