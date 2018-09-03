@@ -16,11 +16,11 @@ export class ProjectsRouter extends Routing {
   
   route(): void {
 
-    this.router.post('/',  PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.projectsController.createProject.bind(this.projectsController));     // Create
+    this.router.post('/',        PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.projectsController.createProject.bind(this.projectsController));  // Create
 
-    this.router.get('/',    PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.projectsController.getProjects.bind(this.projectsController));      // Read
+    this.router.get('/',         PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.projectsController.getProjects.bind(this.projectsController));    // Read
 
-    this.router.delete('/:id',    PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.projectsController.removeProject.bind(this.projectsController));      // Delete
+    this.router.delete('/:id',   PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.projectsController.removeProject.bind(this.projectsController));  // Delete
 
     this.router.get('/download', PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.projectsController.downloadProject.bind(this.projectsController));
   }
