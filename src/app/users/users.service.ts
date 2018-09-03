@@ -11,8 +11,54 @@ export class UsersService extends BaseService<IUser> {
     super(userEntity);
   }
 
+  async findByEmail(email: string): Promise<IResult> {
+    try {
+      const result = await this.repo.findOne({email: email});
+      if(result) {
+        return {
+          statusCode: 200,
+          body: {
+            status: true,
+            message: 'This email already exists',
+            data: true
+          }
+        }
+      }
+      return {
+        statusCode: 200,
+        body: {
+          status: true,
+          message: '',
+          data: false
+        }
+      }
+    }
+    catch(err) {
+      console.log(err);
+      return {
+        statusCode: 502,
+        body: {
+          status: false,
+          message: 'Something went wrong',
+          data: null
+        }
+      }
+    }
+  }
+
   async addUser(user: IUser): Promise<IResult> {
     try {
+      const exists = await this.findByEmail(user.email);
+      if(exists.body.data) {
+        return {
+          statusCode: 422,
+          body: {
+            status: false,
+            message: 'This email already exists',
+            data: null
+          }
+        }
+      }
       user.password = await passwordHash(user.password, 10);
       const res = await this.addItem(user);
       if(res) {
@@ -149,6 +195,7 @@ export class UsersService extends BaseService<IUser> {
     try {
       const result = await this.repo.findOne({email: user.email});
       if(result) {
+        console.log(result);
         if(await passwordCompare(user.password, result.password)) {
           return {
             statusCode: 200,

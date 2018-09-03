@@ -9,6 +9,10 @@ export class UsersController extends BaseController<UsersService> {
     super(new UsersService(UserEntity));
   }
 
+  async findByEmail(req: Request, res: Response): Promise<void> {
+    await this.handle(this.service.findByEmail(req.query.email), res);
+  }
+
   async addUser(req: Request, res: Response): Promise<void> {
     await this.handle(this.service.addUser(req.body), res);
   }

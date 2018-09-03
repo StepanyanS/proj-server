@@ -16,6 +16,8 @@ export class UsersRouter extends Routing {
 
   route(): void {
 
+    this.router.get('/check/', this.usersController.findByEmail.bind(this.usersController));
+
     this.router.post('/',      this.usersController.addUser.bind(this.usersController));                                                                         // Create
 
     this.router.get('/',       PassportMiddleWare.passport.authenticate('jwt', { session: false }), this.usersController.getUser.bind(this.usersController));    // Read
