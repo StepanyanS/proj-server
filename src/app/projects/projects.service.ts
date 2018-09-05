@@ -176,7 +176,7 @@ export class ProjectsService extends BaseService<IProject> {
     catch(err) {
       console.log(err);
       return {
-        statusCode: 200,
+        statusCode: 502,
         body: {
           status: false,
           message: 'Something went wrong',

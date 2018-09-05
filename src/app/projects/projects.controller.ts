@@ -19,7 +19,7 @@ export class ProjectsController extends BaseController<ProjectsService> {
   }
 
   public async removeProject(req: Request, res: Response): Promise<void> {
-    await this.handle(this.service.removeProject(req.user, req.params.id), res);
+    await this.handle(this.service.removeProject(req.user, +req.params.id), res);
   }
 
   public async downloadProject(req: Request, res: Response): Promise<void> {

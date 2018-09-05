@@ -193,9 +193,8 @@ export class UsersService extends BaseService<IUser> {
 
   async login(user: IUser): Promise<IResult> {
     try {
-      const result = await this.repo.findOne({email: user.email});
+      const result = await this.repo.findOne({ email: user.email });
       if(result) {
-        console.log(result);
         if(await passwordCompare(user.password, result.password)) {
           return {
             statusCode: 200,
@@ -210,7 +209,7 @@ export class UsersService extends BaseService<IUser> {
           statusCode: 401,
           body: {
             status: false,
-            message: 'Email or password are incorrect',
+            message: 'Email or password is incorrect',
             data: null
           }
         }
@@ -219,7 +218,7 @@ export class UsersService extends BaseService<IUser> {
         statusCode: 401,
         body: {
           status: false,
-          message: 'Email or password are incorrect',
+          message: 'Email or password is incorrect',
           data: null
         }
       }
