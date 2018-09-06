@@ -1,5 +1,5 @@
 const components = [
-    'header-test'
+	'header-test'
 ];
 
 module.exports = components;
