@@ -114,7 +114,11 @@ export class ProjectsService extends BaseService<IProject> {
           body: {
             status: true,
             message: 'Project has been successfully created',
-            data: null
+            data: {
+              id: res.id,
+              projectName: res.projectName,
+              date: res.date
+            }
           }
         };
       }
@@ -151,7 +155,7 @@ export class ProjectsService extends BaseService<IProject> {
         const result = projects.map(project => {
           return {
             id: project.id,
-            name: project.projectName,
+            projectName: project.projectName,
             date: project.date
           }
         });
