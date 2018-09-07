@@ -10,16 +10,15 @@ export class App {
   private expressApp: express.Express;
   private corsOptions: cors.CorsOptions;
 
-  constructor() {}
-
-  async bootstrap() {
-
+  constructor() {
     this.expressApp = express();
 
     this.corsOptions = {
       optionsSuccessStatus: 200
     };
+  }
 
+  private async use(): Promise<void> {
     this.expressApp.use(cors(this.corsOptions));
     this.expressApp.use(json());
 
@@ -31,10 +30,17 @@ export class App {
       this.expressApp.use('/api', this.routes.router);
     }
     catch(err) {
+      console.log(err);
       this.expressApp.use('*', (req, res) => {
         res.status(404).send('Not Found');
       });
+      setTimeout(this.use.bind(this), 2000);
     }
+  }
+
+  public async bootstrap() {
+
+    await this.use();
 
     this.expressApp.listen(3000, (): void => {
       console.log('Server started!');
