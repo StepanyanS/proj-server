@@ -19,7 +19,7 @@ export class PassportMiddleWare {
 
     PassportMiddleWare.passport = use(new Strategy(this.strategyOptions, async (jwt_payload, done) => {
       const result = await PassportMiddleWare.usersService.getUser(jwt_payload.id);
-      if(!result) return done(false, false);
+      if(!result.body.status) return done(false, false);
       return done(null, jwt_payload.id);
     }));
   }
