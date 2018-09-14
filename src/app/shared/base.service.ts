@@ -1,8 +1,9 @@
 import { Database } from '../db/database';
 import { Repository, EntitySchema, DeepPartial, UpdateResult, DeleteResult, FindConditions } from 'typeorm';
+import { IResult } from '../models/result';
 
 export abstract class BaseService<T> {
-  repo: Repository<T>;
+  protected repo: Repository<T>;
 
   constructor(protected entity: EntitySchema<T>) {
     this.repo = Database.connection.getRepository(this.entity);
@@ -26,5 +27,16 @@ export abstract class BaseService<T> {
 
   protected async getAll(options: FindConditions<T>): Promise<T[]> {
     return await this.repo.find(options);
+  }
+
+  protected getResult(statusCode: number, status: boolean, message: string, data: any = null): IResult {
+    return {
+      statusCode: statusCode,
+      body: {
+        status: status,
+        message: message,
+        data: data
+      }
+    }
   }
 }
