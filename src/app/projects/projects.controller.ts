@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ProjectsService } from './projects.service';
-import { newProjectDir } from './projects.config';
+import { PROJECT_CONFIG } from './projects.config';
 import { ProjectEntity } from '../entities/project.entity';
 import { BaseController } from '../shared/base.controller';
 
@@ -23,7 +23,7 @@ export class ProjectsController extends BaseController<ProjectsService> {
   }
 
   public async downloadProject(req: Request, res: Response): Promise<void> {
-    const file = `${newProjectDir}/${req.user}/${req.query.projectName}.zip`;
+    const file = `${PROJECT_CONFIG.NEW_PROJECT_DIR}/${req.user}/${req.query.projectName}.zip`;
     res.download(file);
   }
 

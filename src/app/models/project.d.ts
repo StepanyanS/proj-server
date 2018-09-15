@@ -9,7 +9,7 @@ export interface IProjectData {
 }
 
 export interface IProject {
-  id: number;
+  readonly id?: number;
   user: number;
   projectName: string;
   date: Date;
