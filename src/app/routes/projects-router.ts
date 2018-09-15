@@ -3,7 +3,7 @@ import { PassportMiddleWare } from '../middleware/passport';
 import { ProjectsController } from './../projects/projects.controller';
 
 export class ProjectsRouter extends Routing {
-  projectsController: ProjectsController;
+  private projectsController: ProjectsController;
   
   constructor() {
     super();

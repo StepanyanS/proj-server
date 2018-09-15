@@ -4,7 +4,7 @@ import { PassportMiddleWare } from '../middleware/passport';
 import { UsersController } from './../users/users.controller';
 
 export class UsersRouter extends Routing {
-  usersController: UsersController;
+  private usersController: UsersController;
 
   constructor () {
     super();

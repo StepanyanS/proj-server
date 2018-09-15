@@ -3,8 +3,8 @@ import { UsersRouter } from './users-router';
 import { ProjectsRouter } from './projects-router';
 
 export class Routes extends Routing {
-  usersrouter: UsersRouter;
-  projectsRouter: ProjectsRouter;
+  private usersrouter: UsersRouter;
+  private projectsRouter: ProjectsRouter;
 
   constructor() {
     super();
