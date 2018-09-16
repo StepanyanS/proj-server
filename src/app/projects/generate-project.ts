@@ -55,13 +55,8 @@ export class GenerateProject {
       });
   
       output.on('close', async () => {
-        try {
-          await remove(id, projectName);
-          resolve(true);
-        }
-        catch(err) {
-          console.log(err);
-        }
+        await remove(id, projectName);
+        resolve(true);
       });
       archive.on('error', (err) => reject(err));
     })
@@ -85,14 +80,9 @@ export class GenerateProject {
   }
 
   private async writeVariablesData(variablesFile: string, data: string): Promise<void> {
-    try {
-      const wrStream: WriteStream = createWriteStream(variablesFile);
-      await wrStream.write(data);
-      wrStream.close();
-    }
-    catch(err) {
-      console.log(err);
-    }
+    const wrStream: WriteStream = createWriteStream(variablesFile);
+    await wrStream.write(data);
+    wrStream.close();
   }
 
   public async generate(id: number, projectName: string, data: IProjectData) {
