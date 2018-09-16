@@ -39,9 +39,7 @@ export class App {
   }
 
   public async bootstrap() {
-
     await this.use();
-
     this.expressApp.listen(3000, (): void => {
       console.log('Server started!');
     });
