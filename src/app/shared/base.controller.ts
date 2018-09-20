@@ -23,6 +23,7 @@ export abstract class BaseController<T> {
       }
     }
     catch(err) {
+      console.log(err);
       res.status(502).send({
         status: false,
         message: 'Something went wrong',

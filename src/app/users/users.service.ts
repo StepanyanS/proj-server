@@ -1,4 +1,4 @@
-import { EntitySchema } from 'typeorm';
+import { EntitySchema, AdvancedConsoleLogger } from 'typeorm';
 import { hash as passwordHash, compare as passwordCompare } from 'bcrypt';
 import { createToken, remove } from '../utils/utils';
 import { BaseService } from '../shared/base.service';
@@ -30,9 +30,15 @@ export class UsersService extends BaseService<IUser> {
   }
 
   async editUser(id: number, user: IUser): Promise<IResult> {
-    user.password = await passwordHash(user.password, 10);
-    const result = await this.editItem(id, user.email);
-    return this.getResult(200, null, true, '', result);
+    const userForEdit = await this.repo.findOne({ email: user.email });
+    if(userForEdit) {
+      if(await passwordCompare(user.password, userForEdit.password)) {
+        user.password = await passwordHash(user.newPassword, 10);
+        await this.editItem(id, user);
+        return this.getResult(200, null, true, '', { email: user.email, userName: user.userName });
+      }
+      return this.getResult(401, null, false, 'Password is incorrect');
+    }
   }
 
   async removeUser(id: number): Promise<IResult> {
