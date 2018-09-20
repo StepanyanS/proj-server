@@ -29,9 +29,10 @@ export abstract class BaseService<T> {
     return await this.repo.find(options);
   }
 
-  protected getResult(statusCode: number, status: boolean, message: string, data: any = null): IResult {
+  protected getResult(statusCode: number, headers: Object | null, status: boolean, message: string, data: any = null): IResult {
     return {
       statusCode: statusCode,
+      headers: headers,
       body: {
         status: status,
         message: message,

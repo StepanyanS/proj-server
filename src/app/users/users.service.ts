@@ -13,42 +13,42 @@ export class UsersService extends BaseService<IUser> {
 
   async findByEmail(email: string): Promise<IResult> {
     const result = await this.repo.findOne({email: email});
-    return result ? this.getResult(200, true, 'This email already exists', true) : this.getResult(200, true, '', false);
+    return result ? this.getResult(200, null, true, 'This email already exists', true) : this.getResult(200, null, true, '', false);
   }
 
   async addUser(user: IUser): Promise<IResult> {
     const exists = await this.findByEmail(user.email);
-    if(exists.body.data) return this.getResult(422, false, 'This email already exists');
+    if(exists.body.data) return this.getResult(422, null, false, 'This email already exists');
     user.password = await passwordHash(user.password, 10);
     const result = await this.addItem(user);
-    return result ? this.getResult(201, true, 'Now You can login') : this.getResult(502, false, 'Something went wrong');
+    return result ? this.getResult(201, null, true, 'Now You can login') : this.getResult(502, null, false, 'Something went wrong');
   }
 
   async getUser(id: number) {
     const user = await this.getById(id);
-    return user ? this.getResult(200, true, '', { email: user.email, userName: user.userName }) : this.getResult(404, false, 'User not found');
+    return user ? this.getResult(200, null, true, '', { email: user.email, userName: user.userName }) : this.getResult(404, null, false, 'User not found');
   }
 
   async editUser(id: number, user: IUser): Promise<IResult> {
     user.password = await passwordHash(user.password, 10);
     const result = await this.editItem(id, user.email);
-    return this.getResult(200, true, '', result);
+    return this.getResult(200, null, true, '', result);
   }
 
   async removeUser(id: number): Promise<IResult> {
     await remove(id);
     const result = await this.removeItem(id);
-    return result.raw.affectedRows ? this.getResult(202, true, 'User has been removed') : this.getResult(402, false, 'User does not exist');
+    return result.raw.affectedRows ? this.getResult(202, null, true, 'User has been removed') : this.getResult(402, null, false, 'User does not exist');
   }
 
   async login(user: IUser): Promise<IResult> {
     const result = await this.repo.findOne({ email: user.email });
     if(result) {
       if(await passwordCompare(user.password, result.password)) {
-        return this.getResult(200, true, '', await createToken(result.id));
+        return this.getResult(200, null, true, '', await createToken(result.id));
       }
-      return this.getResult(401, false, 'Email or password is incorrect');
+      return this.getResult(401, null, false, 'Email or password is incorrect');
     }
-    return this.getResult(401, false, 'Email or password is incorrect');
+    return this.getResult(401, null, false, 'Email or password is incorrect');
   }
 }

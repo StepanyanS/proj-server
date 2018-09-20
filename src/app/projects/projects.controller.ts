@@ -23,8 +23,7 @@ export class ProjectsController extends BaseController<ProjectsService> {
   }
 
   public async downloadProject(req: Request, res: Response): Promise<void> {
-    const file = `${PROJECT_CONFIG.NEW_PROJECT_DIR}/${req.user}/${req.query.projectName}.zip`;
-    res.download(file);
+    await this.handle(this.service.getProject(req.user, +req.params.id), res, 'download');
   }
 
 }

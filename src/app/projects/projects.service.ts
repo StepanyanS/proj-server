@@ -4,10 +4,12 @@ import { BaseService } from '../shared/base.service';
 import { IResult } from './../models/result.d';
 import { remove } from '../utils/utils';
 import { GenerateProject } from './generate-project';
+import { PROJECT_CONFIG } from './projects.config';
+import { readFileSync } from 'fs';
 
 export class ProjectsService extends BaseService<IProject> {
   private generateProject: GenerateProject;
-  
+
   constructor(projectEntity: EntitySchema<IProject>) {
     super(projectEntity);
     this.generateProject = new GenerateProject();
@@ -21,7 +23,7 @@ export class ProjectsService extends BaseService<IProject> {
     };
 
     const existingProject = await this.getAll({user: userId, projectName: project.projectName});
-    if(existingProject && existingProject.length > 0) return this.getResult(422, false, 'Project with this name is already exists');
+    if(existingProject && existingProject.length > 0) return this.getResult(422, null, false, 'Project with this name is already exists');
     project.user = userId;
     project.date = new Date();
     project.data.colorsSources = colorsSources;
@@ -33,13 +35,15 @@ export class ProjectsService extends BaseService<IProject> {
         projectName: result.projectName,
         date: result.date
       }
-      return this.getResult(201, true, 'Project has been successfully created', data);
+      return this.getResult(201, null, true, 'Project has been successfully created', data);
     }
-    return this.getResult(502, false, 'Something went wrong');
+    return this.getResult(502, null, false, 'Something went wrong');
   }
 
-  getProject(id: number) {
-    
+  async getProject(userId, projectId: number) {
+    const project = await this.getById(projectId);
+    const projectPath = `${PROJECT_CONFIG.NEW_PROJECT_DIR}/${userId}/${project.projectName}.zip`;
+    return this.getResult(200, null, true, '', projectPath);
   }
 
   async getProjects(userId: number): Promise<IResult> {
@@ -52,9 +56,9 @@ export class ProjectsService extends BaseService<IProject> {
           date: project.date
         }
       });
-      return this.getResult(200, true, '', result);
+      return this.getResult(200, null, true, '', result);
     }
-    return this.getResult(200, true, '');
+    return this.getResult(200, null, true, '');
   }
 
   async removeProject(userId: number, projectId: number): Promise<IResult> {
@@ -62,8 +66,8 @@ export class ProjectsService extends BaseService<IProject> {
     if(project) {
       await remove(userId, `${project.projectName}.zip`);
       const result = await this.removeItem(projectId);
-      if(result.raw.affectedRows) return this.getResult(202, true, 'Project has been removed');
+      if(result.raw.affectedRows) return this.getResult(202, null, true, 'Project has been removed');
     }
-    return this.getResult(404, false, 'Project does not exist');
+    return this.getResult(404, null, false, 'Project does not exist');
   }
 }
