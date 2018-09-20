@@ -9,6 +9,7 @@ export class App {
   private routes: Routes;
   private expressApp: express.Express;
   private corsOptions: cors.CorsOptions;
+  private errorCount: number = 0;
 
   constructor() {
     this.expressApp = express();
@@ -19,6 +20,8 @@ export class App {
   }
 
   private async use(): Promise<void> {
+    if(this.errorCount > 4) return;
+
     this.expressApp.use(cors(this.corsOptions));
     this.expressApp.use(json());
 
@@ -34,6 +37,7 @@ export class App {
       this.expressApp.use('*', (req, res) => {
         res.status(404).send('Not Found');
       });
+      this.errorCount++;
       setTimeout(this.use.bind(this), 2000);
     }
   }
