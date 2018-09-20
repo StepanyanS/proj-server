@@ -5,7 +5,6 @@ import { IResult } from './../models/result.d';
 import { remove } from '../utils/utils';
 import { GenerateProject } from './generate-project';
 import { PROJECT_CONFIG } from './projects.config';
-import { readFileSync } from 'fs';
 
 export class ProjectsService extends BaseService<IProject> {
   private generateProject: GenerateProject;
@@ -40,10 +39,13 @@ export class ProjectsService extends BaseService<IProject> {
     return this.getResult(502, null, false, 'Something went wrong');
   }
 
-  async getProject(userId, projectId: number) {
+  async getProject(userId, projectId: number): Promise<IResult> {
     const project = await this.getById(projectId);
-    const projectPath = `${PROJECT_CONFIG.NEW_PROJECT_DIR}/${userId}/${project.projectName}.zip`;
-    return this.getResult(200, null, true, '', projectPath);
+    if(project) {
+      const projectPath = `${PROJECT_CONFIG.NEW_PROJECT_DIR}/${userId}/${project.projectName}.zip`;
+      return this.getResult(200, null, true, '', projectPath);
+    }
+    return this.getResult(502, null, false, 'Something went wrong');
   }
 
   async getProjects(userId: number): Promise<IResult> {
