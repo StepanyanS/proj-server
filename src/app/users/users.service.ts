@@ -1,9 +1,9 @@
-import { EntitySchema, AdvancedConsoleLogger } from 'typeorm';
+import { EntitySchema } from 'typeorm';
 import { hash as passwordHash, compare as passwordCompare } from 'bcrypt';
 import { createToken, remove } from '../utils/utils';
 import { BaseService } from '../shared/base.service';
-import { IUser } from '../models/user.d';
-import { IResult } from './../models/result.d';
+import { IUser } from '../models/user';
+import { IResult } from '../models/result';
 
 export class UsersService extends BaseService<IUser> {
 

@@ -1,9 +1,9 @@
 import { Response } from 'express';
-import { IResult } from './../models/result.d';
+import { IResult } from '../models/result';
 
 export abstract class BaseController<T> {
 
-  constructor(protected service: T) {}
+  protected constructor(protected service: T) {}
   
   protected async handle(handler: Promise<IResult>, res: Response, resType: string = 'send'): Promise<void> {
     try {
